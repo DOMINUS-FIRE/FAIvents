@@ -15,7 +15,6 @@ me\dominus\faivents\events\EventManager$EventController.class
 me\dominus\faivents\command\SecretCommand$MobEntry.class
 me\dominus\faivents\events\glitch\RealityGlitchEvent$1.class
 me\dominus\faivents\quarry\QuarryManager$BlockPos.class
-me\dominus\faivents\command\ShopCommand.class
 me\dominus\faivents\events\horror\HorrorNightEvent.class
 me\dominus\faivents\enchant\CustomAnvilListener.class
 me\dominus\faivents\events\horror\HorrorNightEvent$3.class

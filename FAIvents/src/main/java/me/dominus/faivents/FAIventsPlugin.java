@@ -1,6 +1,7 @@
 package me.dominus.faivents;
 
 import me.dominus.faivents.command.ChaseCommand;
+import me.dominus.faivents.command.ChitCommand;
 import me.dominus.faivents.command.EventCommand;
 import me.dominus.faivents.command.InvCommand;
 import me.dominus.faivents.command.ShopCommand;
@@ -32,6 +33,7 @@ public final class FAIventsPlugin extends JavaPlugin {
     private EventManager eventManager;
     private InvisManager invisManager;
     private QuarryManager quarryManager;
+    private boolean secretRequiresOp = false;
 
     @Override
     public void onEnable() {
@@ -72,6 +74,7 @@ public final class FAIventsPlugin extends JavaPlugin {
             getCommand("event").setExecutor(cmd);
             getCommand("event").setTabCompleter(cmd);
         }
+        secretRequiresOp = getConfig().getBoolean("secret.require_op", false);
         SecretCommand secret = new SecretCommand(this);
         if (getCommand("secret") != null) {
             getCommand("secret").setExecutor(secret);
@@ -100,6 +103,11 @@ public final class FAIventsPlugin extends JavaPlugin {
         if (getCommand("chase") != null) {
             getCommand("chase").setExecutor(new ChaseCommand(quarryManager, quarryListener));
         }
+        if (getCommand("chit") != null) {
+            ChitCommand chit = new ChitCommand(this);
+            getCommand("chit").setExecutor(chit);
+            getServer().getPluginManager().registerEvents(chit, this);
+        }
 
         registerBookRecipes();
 
@@ -122,6 +130,10 @@ public final class FAIventsPlugin extends JavaPlugin {
 
     public EventManager getEventManager() {
         return eventManager;
+    }
+
+    public boolean isSecretRequiresOp() {
+        return secretRequiresOp;
     }
 
     private void registerBookRecipes() {

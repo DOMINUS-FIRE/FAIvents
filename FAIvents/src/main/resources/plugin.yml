@@ -23,6 +23,9 @@ commands:
   chase:
     description: Open your level 5 quarry storage
     usage: /chase
+  chit:
+    description: Anti-cheat check menu
+    usage: /chit <player>
 permissions:
   faivents.admin:
     description: Admin permissions for FAIvents

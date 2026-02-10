@@ -3,6 +3,9 @@ prefix: '&6[FAIvents]&r '
 
 allow_parallel_events: false
 
+secret:
+  require_op: false
+
 ufo:
   enabled: true
   duration_seconds: 60
