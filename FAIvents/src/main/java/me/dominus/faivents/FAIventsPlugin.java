@@ -15,6 +15,7 @@ import me.dominus.faivents.util.InvisManager;
 import me.dominus.faivents.util.Msg;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
@@ -25,6 +26,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -69,45 +72,71 @@ public final class FAIventsPlugin extends JavaPlugin {
         QuarryListener quarryListener = new QuarryListener(quarryManager);
         getServer().getPluginManager().registerEvents(quarryListener, this);
 
-        EventCommand cmd = new EventCommand(eventManager);
-        if (getCommand("event") != null) {
-            getCommand("event").setExecutor(cmd);
-            getCommand("event").setTabCompleter(cmd);
-        }
+        EventCommand eventCmd = new EventCommand(eventManager);
+        bindCommand(
+                "event",
+                eventCmd,
+                eventCmd,
+                "Manage events",
+                "/event <ufo|meteor|glitch|horror|artifact> <start|stop|status> [player|all]",
+                "faivents.admin",
+                "&cYou don't have permission."
+        );
         secretRequiresOp = getConfig().getBoolean("secret.require_op", false);
         SecretCommand secret = new SecretCommand(this);
-        if (getCommand("secret") != null) {
-            getCommand("secret").setExecutor(secret);
-        } else {
-            registerFallbackCommand(
-                    "secret",
-                    secret,
-                    null,
-                    "Secret admin menu",
-                    "/secret",
-                    null,
-                    null
-            );
-        }
+        bindCommand(
+                "secret",
+                secret,
+                null,
+                "Secret admin menu",
+                "/secret",
+                null,
+                null
+        );
         getServer().getPluginManager().registerEvents(secret, this);
 
-        if (getCommand("inv") != null) {
-            getCommand("inv").setExecutor(new InvCommand(invisManager));
-        }
+        bindCommand(
+                "inv",
+                new InvCommand(invisManager),
+                null,
+                "Toggle/invisibility tools",
+                "/inv",
+                "faivents.admin",
+                "&cYou don't have permission."
+        );
         ShopCommand shop = new ShopCommand(this, quarryManager);
-        if (getCommand("shop") != null) {
-            getCommand("shop").setExecutor(shop);
-        }
+        bindCommand(
+                "shop",
+                shop,
+                null,
+                "Open shop menu",
+                "/shop",
+                null,
+                null
+        );
         getServer().getPluginManager().registerEvents(shop, this);
 
-        if (getCommand("chase") != null) {
-            getCommand("chase").setExecutor(new ChaseCommand(quarryManager, quarryListener));
-        }
-        if (getCommand("chit") != null) {
-            ChitCommand chit = new ChitCommand(this);
-            getCommand("chit").setExecutor(chit);
-            getServer().getPluginManager().registerEvents(chit, this);
-        }
+        ChaseCommand chase = new ChaseCommand(quarryManager, quarryListener);
+        bindCommand(
+                "chase",
+                chase,
+                null,
+                "Open your level 5 quarry storage",
+                "/chase",
+                null,
+                null
+        );
+        ChitCommand chit = new ChitCommand(this);
+        bindCommand(
+                "chit",
+                chit,
+                null,
+                "Anti-cheat check menu",
+                "/chit <player>",
+                null,
+                null
+        );
+        getServer().getPluginManager().registerEvents(chit, this);
 
         registerBookRecipes();
 
@@ -213,22 +242,39 @@ public final class FAIventsPlugin extends JavaPlugin {
             if (!cfg.exists()) {
                 return;
             }
-            String text = java.nio.file.Files.readString(cfg.toPath(), java.nio.charset.StandardCharsets.UTF_8);
-            String fixed = text;
-            fixed = fixed.replace("&a\u0420\u0098\u0420\u0405\u0420\u0455\u0420\u0457\u0420\u00BB\u0420\u00B0\u0420\u0405\u0420\u00B5\u0421\u201A\u0421\u040F\u0420\u0405\u0420\u0451\u0420\u0405", "&a\u0418\u043D\u043E\u043F\u043B\u0430\u043D\u0435\u0442\u044F\u043D\u0438\u043D");
-            fixed = fixed.replace("&b\u0420\u0098\u0420\u0405\u0420\u0455\u0420\u0457\u0420\u00BB\u0420\u00B0\u0420\u0405\u0420\u00B5\u0421\u201A\u0420\u0405\u0421\u2039\u0420\u2116 \u0420\u0457\u0420\u00B0\u0421\u0402\u0420\u00B0\u0420\u00B7\u0420\u0451\u0421\u201A", "&b\u0418\u043D\u043E\u043F\u043B\u0430\u043D\u0435\u0442\u043D\u044B\u0439 \u043F\u0430\u0440\u0430\u0437\u0438\u0442");
-            fixed = fixed.replace("&6\u0420\u2018\u0421\u0453\u0421\u0402", "&6\u0411\u0443\u0440");
-            fixed = fixed.replace("&6\u0420\u045A\u0420\u00B0\u0420\u0456\u0420\u0405\u0420\u0451\u0421\u201A", "&6\u041C\u0430\u0433\u043D\u0438\u0442");
-            fixed = fixed.replace("&6\u0420\u0452\u0420\u0406\u0421\u201A\u0420\u0455\u0420\u0457\u0420\u00BB\u0420\u00B0\u0420\u0406\u0420\u0454\u0420\u00B0", "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430");
-            fixed = fixed.replace("&e\u0420\u0459\u0420\u0455\u0420\u0458\u0420\u0457\u0420\u00B0\u0421\u0403 \u0420\u00B0\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u00B0", "&e\u041A\u043E\u043C\u043F\u0430\u0441 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430");
+            String text = java.nio.file.Files.readString(cfg.toPath(), StandardCharsets.UTF_8);
+            String fixed = fixMojibake(text);
             if (!fixed.equals(text)) {
-                java.nio.file.Files.writeString(cfg.toPath(), fixed, java.nio.charset.StandardCharsets.UTF_8);
+                java.nio.file.Files.writeString(cfg.toPath(), fixed, StandardCharsets.UTF_8);
                 reloadConfig();
                 getLogger().info("Fixed mojibake in config.yml");
             }
         } catch (Exception e) {
             getLogger().warning("Failed to fix config.yml encoding: " + e.getMessage());
         }
+    }
+
+    private String fixMojibake(String text) {
+        String converted = new String(text.getBytes(Charset.forName("Windows-1251")), StandardCharsets.UTF_8);
+        if (isMojibake(text, converted)) {
+            return converted;
+        }
+        return text;
+    }
+
+    private boolean isMojibake(String original, String converted) {
+        return countBad(converted) < countBad(original);
+    }
+
+    private int countBad(String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\u0420' || c == '\u0421') {
+                count++;
+            }
+        }
+        return count;
     }
 
     private void registerFallbackCommand(String name,
@@ -268,6 +314,36 @@ public final class FAIventsPlugin extends JavaPlugin {
         } catch (Exception ex) {
             getLogger().severe("Failed to register fallback command /" + name + ": " + ex.getMessage());
         }
+    }
+
+    private void bindCommand(String name,
+                             CommandExecutor exec,
+                             TabCompleter tab,
+                             String desc,
+                             String usage,
+                             String perm,
+                             String permMsg) {
+        PluginCommand cmd = getCommand(name);
+        if (cmd != null) {
+            cmd.setExecutor(exec);
+            if (tab != null) {
+                cmd.setTabCompleter(tab);
+            }
+            if (desc != null) {
+                cmd.setDescription(desc);
+            }
+            if (usage != null) {
+                cmd.setUsage(usage);
+            }
+            if (perm != null) {
+                cmd.setPermission(perm);
+            }
+            if (permMsg != null) {
+                cmd.setPermissionMessage(permMsg);
+            }
+            return;
+        }
+        registerFallbackCommand(name, exec, tab, desc, usage, perm, permMsg);
     }
 
     private CommandMap getCommandMap() {

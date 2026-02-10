@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -45,6 +46,7 @@ import me.dominus.faivents.util.Msg;
 public class ChitCommand implements CommandExecutor, Listener {
 
     private static final String TITLE = "\u041F\u0440\u043E\u0432\u0435\u0440\u043A\u0430: \u0447\u0438\u0442\u044B";
+    private static final String TITLE_SELECT = "\u0412\u044B\u0431\u0435\u0440\u0438 \u0438\u0433\u0440\u043E\u043A\u0430";
     private static final int GUI_SIZE = 27;
     private static final int SLOT_DIAMOND = 11;
     private static final int SLOT_ANCIENT = 13;
@@ -69,11 +71,11 @@ public class ChitCommand implements CommandExecutor, Listener {
             Msg.send(sender, "&c\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F \u0438\u0433\u0440\u043E\u043A\u043E\u0432.");
             return true;
         }
+        Player admin = (Player) sender;
         if (args.length < 1) {
-            Msg.send(sender, "&c\u0418\u0441\u043F\u043E\u043B\u044C\u0437\u0443\u0439: /chit <\u0438\u0433\u0440\u043E\u043A>");
+            admin.openInventory(buildSelectGui());
             return true;
         }
-        Player admin = (Player) sender;
         Player target = Bukkit.getPlayerExact(args[0]);
         if (target == null) {
             Msg.send(admin, "&c\u0418\u0433\u0440\u043E\u043A \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.");
@@ -93,12 +95,53 @@ public class ChitCommand implements CommandExecutor, Listener {
         return inv;
     }
 
+    private Inventory buildSelectGui() {
+        Inventory inv = Bukkit.createInventory(null, 54, TITLE_SELECT);
+        int slot = 0;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (slot >= 54) {
+                break;
+            }
+            ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
+            ItemMeta meta = head.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(Msg.color("&b" + p.getName()));
+                head.setItemMeta(meta);
+            }
+            inv.setItem(slot++, head);
+        }
+        return inv;
+    }
+
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player admin)) {
             return;
         }
         String title = event.getView().getTitle();
+        if (title.startsWith(TITLE_SELECT)) {
+            event.setCancelled(true);
+            ItemStack clicked = event.getCurrentItem();
+            if (clicked == null || clicked.getType() != Material.PLAYER_HEAD) {
+                return;
+            }
+            String name = null;
+            ItemMeta meta = clicked.getItemMeta();
+            if (meta != null && meta.hasDisplayName()) {
+                name = ChatColor.stripColor(meta.getDisplayName());
+            }
+            if (name == null || name.isEmpty()) {
+                return;
+            }
+            Player target = Bukkit.getPlayerExact(name);
+            if (target == null) {
+                Msg.send(admin, "&c\u0418\u0433\u0440\u043E\u043A \u043D\u0435 \u043E\u043D\u043B\u0430\u0439\u043D.");
+                return;
+            }
+            admin.openInventory(buildGui(target));
+            openTarget.put(admin.getUniqueId(), target.getUniqueId());
+            return;
+        }
         if (!title.startsWith(TITLE)) {
             return;
         }

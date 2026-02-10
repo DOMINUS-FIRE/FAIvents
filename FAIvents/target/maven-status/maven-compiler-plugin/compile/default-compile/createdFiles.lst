@@ -1,5 +1,6 @@
 me\dominus\faivents\util\InvisManager$1.class
 me\dominus\faivents\events\artifact\ArtifactHuntEvent$2.class
+me\dominus\faivents\command\ChitCommand$1.class
 me\dominus\faivents\events\meteor\MeteorEvent$MeteorPart.class
 me\dominus\faivents\events\ufo\UfoAbductionEvent$1.class
 me\dominus\faivents\events\artifact\ArtifactHuntEvent.class
@@ -15,6 +16,7 @@ me\dominus\faivents\events\EventManager$EventController.class
 me\dominus\faivents\command\SecretCommand$MobEntry.class
 me\dominus\faivents\events\glitch\RealityGlitchEvent$1.class
 me\dominus\faivents\quarry\QuarryManager$BlockPos.class
+me\dominus\faivents\command\ShopCommand.class
 me\dominus\faivents\events\horror\HorrorNightEvent.class
 me\dominus\faivents\enchant\CustomAnvilListener.class
 me\dominus\faivents\events\horror\HorrorNightEvent$3.class
@@ -69,6 +71,7 @@ me\dominus\faivents\enchant\SecondLifeListener.class
 me\dominus\faivents\enchant\DrillEnchant.class
 me\dominus\faivents\events\artifact\ArtifactHuntEvent$1.class
 me\dominus\faivents\util\ConfigUtil.class
+me\dominus\faivents\command\ChitCommand.class
 me\dominus\faivents\command\SecretCommand$FollowState.class
 me\dominus\faivents\events\horror\HorrorNightEvent$2.class
 me\dominus\faivents\enchant\AssassinListener.class

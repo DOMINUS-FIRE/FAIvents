@@ -20,6 +20,7 @@ public final class Msg {
     }
 
     public static String color(String msg) {
+        if (msg == null) return "";
         return ChatColor.translateAlternateColorCodes('&', msg);
     }
 }
