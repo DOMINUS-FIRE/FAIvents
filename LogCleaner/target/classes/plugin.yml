@@ -1,0 +1,13 @@
+﻿name: LogCleaner
+main: me.dominus.logcleaner.LogCleanerPlugin
+version: 1.0.0
+api-version: '1.20'
+author: dominus
+commands:
+  logclean:
+    description: Manage log cleaning
+    usage: /logclean <status|now|reload>
+permissions:
+  logcleaner.admin:
+    description: Admin access to LogCleaner
+    default: op

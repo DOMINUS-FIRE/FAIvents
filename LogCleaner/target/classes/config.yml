@@ -1,0 +1,9 @@
+﻿# LogCleaner configuration
+# every_minutes has priority over every_hours if > 0
+# Set both to 0 to disable auto cleaning
+
+every_hours: 2
+every_minutes: 0
+
+# Keep log files newer than this number of days
+keep_days: 7

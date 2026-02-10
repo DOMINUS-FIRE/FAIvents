@@ -1,0 +1,265 @@
+# FAIvents config
+prefix: '&6[FAIvents]&r '
+
+allow_parallel_events: false
+
+ufo:
+  enabled: true
+  duration_seconds: 60
+  arena:
+    world: world
+    x: 0
+    y: 150
+    z: 0
+    radius: 8
+  beam:
+    particles: END_ROD
+    sound: ENTITY_ENDERMAN_TELEPORT
+  abduction_effects:
+    blindness_seconds: 3
+    levitation_seconds: 2
+  saucer:
+    enabled: true
+    height: 6
+    radius: 7
+    interior_height: 3
+    material: IRON_BLOCK
+    light_material: SEA_LANTERN
+    floor_material: SMOOTH_STONE
+    wall_material: TINTED_GLASS
+    alien_radius: 4
+  temp_keep_inventory:
+    enabled: false
+    value: true
+  aliens:
+    - type: ZOMBIE
+      name: '&aИнопланетянин'
+      count: 4
+      effects:
+        - 'SPEED:1:1200'
+      equipment:
+        hand: IRON_SWORD
+        head: IRON_HELMET
+        chest: IRON_CHESTPLATE
+        legs: IRON_LEGGINGS
+        feet: IRON_BOOTS
+    - type: SILVERFISH
+      name: '&bИнопланетный паразит'
+      count: 6
+  reward:
+    loot:
+      - material: DIAMOND
+        min: 1
+        max: 3
+        chance: 0.6
+      - material: EMERALD
+        min: 2
+        max: 6
+        chance: 0.8
+      - material: NETHERITE_SCRAP
+        min: 1
+        max: 1
+        chance: 0.2
+
+meteor:
+  enabled: true
+  raytrace_max_distance: 120
+  lightning_rod:
+    search_radius: 25
+    force_if_found: true
+  flight:
+    height: 50
+    speed_blocks_per_tick: 1.6
+    trail_particle: FLAME
+    trail_particle_count: 14
+    impact_sound: ENTITY_GENERIC_EXPLODE
+  model:
+    radius: 2
+    palette:
+      - material: MAGMA_BLOCK
+        weight: 5
+      - material: BLACKSTONE
+        weight: 3
+      - material: OBSIDIAN
+        weight: 2
+  crater:
+    radius: 7
+    depth: 6
+    core_palette:
+      - material: MAGMA_BLOCK
+        weight: 5
+      - material: OBSIDIAN
+        weight: 3
+      - material: CRYING_OBSIDIAN
+        weight: 2
+  rarity:
+    common: 0.6
+    rare: 0.25
+    epic: 0.12
+    legendary: 0.03
+  loot:
+    chest_material: CHEST
+    tiers:
+      common:
+        - material: IRON_INGOT
+          min: 6
+          max: 12
+          chance: 1.0
+        - material: GOLD_INGOT
+          min: 2
+          max: 4
+          chance: 0.6
+      rare:
+        - material: GOLD_INGOT
+          min: 6
+          max: 12
+          chance: 1.0
+        - material: DIAMOND
+          min: 1
+          max: 2
+          chance: 0.6
+      epic:
+        - material: DIAMOND
+          min: 2
+          max: 4
+          chance: 1.0
+        - material: NETHERITE_SCRAP
+          min: 1
+          max: 2
+          chance: 0.4
+      legendary:
+        - material: NETHERITE_INGOT
+          min: 1
+          max: 1
+          chance: 0.8
+        - material: DIAMOND_BLOCK
+          min: 1
+          max: 2
+          chance: 0.5
+    custom_books:
+      enabled: true
+      chance: 0.25
+      list:
+        - type: DRILL
+          weight: 5
+          name: '&6Бур'
+        - type: MAGNET
+          weight: 3
+          name: '&6Магнит'
+        - type: AUTOSMELT
+          weight: 2
+          name: '&6Автоплавка'
+
+reality_glitch:
+  enabled: true
+  duration_minutes: 10
+  effects:
+    - 'SPEED:1'
+    - 'JUMP:1'
+    - 'HASTE:1'
+  random_effect_chance: 0.15
+  random_effects:
+    - 'SLOW:1'
+    - 'BLINDNESS:0'
+    - 'CONFUSION:0'
+  visuals:
+    enabled: true
+    particle: PORTAL
+    particle_count: 30
+    interval_ticks: 30
+    launch_chance: 0.2
+    launch_power: 0.6
+    flicker_chance: 0.25
+    flicker_ticks: 10
+    sound: ENTITY_ENDERMAN_SCREAM
+    fragments:
+      enabled: true
+      count: 4
+      radius: 6
+      duration_ticks: 40
+      materials:
+        - NETHERRACK
+        - END_STONE
+        - CRIMSON_NYLIUM
+        - WARPED_NYLIUM
+
+horror_night:
+  enabled: true
+  duration_minutes: 8
+  wave_interval_seconds: 60
+  mob_buff:
+    radius: 24
+    health_multiplier: 1.5
+    damage_multiplier: 1.4
+  extra_spawns:
+    - type: ZOMBIE
+      count: 6
+      effects:
+        - 'SPEED:0:400'
+        - 'INCREASE_DAMAGE:0:400'
+      equipment:
+        hand: IRON_SWORD
+        head: CHAINMAIL_HELMET
+        chest: CHAINMAIL_CHESTPLATE
+        legs: CHAINMAIL_LEGGINGS
+        feet: CHAINMAIL_BOOTS
+    - type: SKELETON
+      count: 5
+      effects:
+        - 'SPEED:0:400'
+      equipment:
+        hand: BOW
+        head: CHAINMAIL_HELMET
+    - type: SPIDER
+      count: 5
+      effects:
+        - 'SPEED:1:400'
+  ambience:
+    particle: SMOKE_LARGE
+    sound: AMBIENT_CAVE
+
+artifact_hunt:
+  enabled: true
+  duration_minutes: 15
+  radius_min: 40
+  radius_max: 140
+  center: average
+  artifact_block: BEACON
+  announce_pvp_rule_only: true
+  particle: END_ROD
+  compass:
+    offhand: true
+    name: '&eКомпас артефакта'
+  structure:
+    radius: 3
+    height: 4
+    floor_material: POLISHED_BLACKSTONE_BRICKS
+    pillar_material: DEEPSLATE_BRICKS
+    accent_material: AMETHYST_BLOCK
+    light_material: SOUL_LANTERN
+  loot:
+    - material: DIAMOND_BLOCK
+      min: 1
+      max: 1
+      chance: 0.2
+    - material: GOLDEN_APPLE
+      min: 2
+      max: 5
+      chance: 0.8
+    - material: NETHERITE_INGOT
+      min: 1
+      max: 1
+      chance: 0.1
+  custom_books:
+    enabled: true
+    chance: 0.3
+    list:
+      - type: DRILL
+        weight: 4
+        name: '&6Бур'
+      - type: MAGNET
+        weight: 3
+        name: '&6Магнит'
+      - type: AUTOSMELT
+        weight: 3
+        name: '&6Автоплавка'

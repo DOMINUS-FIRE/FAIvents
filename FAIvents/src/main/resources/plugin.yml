@@ -1,0 +1,32 @@
+name: FAIvents
+main: me.dominus.faivents.FAIventsPlugin
+version: 1.0.0
+api-version: 1.20
+author: dominus
+commands:
+  event:
+    description: Manage events
+    usage: /event <ufo|meteor|glitch|horror|artifact> <start|stop|status> [player|all]
+    permission: faivents.admin
+    permission-message: "&cYou don't have permission."
+  secret:
+    description: Secret admin menu
+    usage: /secret
+    tab-complete: -1
+  inv:
+    description: Toggle/invisibility tools
+    usage: /inv
+    permission: faivents.admin
+  shop:
+    description: Open shop menu
+    usage: /shop
+  chase:
+    description: Open your level 5 quarry storage
+    usage: /chase
+permissions:
+  faivents.admin:
+    description: Admin permissions for FAIvents
+    default: op
+  faivents.secret:
+    description: Access to /secret menu
+    default: false
