@@ -316,6 +316,11 @@ public class SecretCommand implements CommandExecutor, Listener {
     }
 
     private static String prettyName(String rawName) {
+        String key = rawName.toUpperCase(Locale.ROOT);
+        String ru = RUS_MOB_NAMES.get(key);
+        if (ru != null) {
+            return ru;
+        }
         String raw = rawName.toLowerCase(Locale.ROOT).replace('_', ' ');
         String[] parts = raw.split(" ");
         StringBuilder sb = new StringBuilder();
@@ -326,6 +331,90 @@ public class SecretCommand implements CommandExecutor, Listener {
             sb.append(Character.toUpperCase(p.charAt(0))).append(p.substring(1)).append(' ');
         }
         return sb.toString().trim();
+    }
+
+    private static final Map<String, String> RUS_MOB_NAMES = new HashMap<>();
+    static {
+        RUS_MOB_NAMES.put("ALLAY", "\u0410\u043B\u043B\u0430\u0439");
+        RUS_MOB_NAMES.put("ARMADILLO", "\u0411\u0440\u043E\u043D\u0435\u043D\u043E\u0441\u0435\u0446");
+        RUS_MOB_NAMES.put("AXOLOTL", "\u0410\u043A\u0441\u043E\u043B\u043E\u0442\u043B\u044C");
+        RUS_MOB_NAMES.put("BAT", "\u041B\u0435\u0442\u0443\u0447\u0430\u044F \u043C\u044B\u0448\u044C");
+        RUS_MOB_NAMES.put("BEE", "\u041F\u0447\u0435\u043B\u0430");
+        RUS_MOB_NAMES.put("BLAZE", "\u0418\u0444\u0440\u0438\u0442");
+        RUS_MOB_NAMES.put("BOGGED", "\u0411\u043E\u043B\u043E\u0442\u043D\u0438\u043A");
+        RUS_MOB_NAMES.put("BREEZE", "\u0411\u0440\u0438\u0437");
+        RUS_MOB_NAMES.put("CAT", "\u041A\u043E\u0448\u043A\u0430");
+        RUS_MOB_NAMES.put("CAMEL", "\u0412\u0435\u0440\u0431\u043B\u044E\u0434");
+        RUS_MOB_NAMES.put("CAVE_SPIDER", "\u041F\u0435\u0449\u0435\u0440\u043D\u044B\u0439 \u043F\u0430\u0443\u043A");
+        RUS_MOB_NAMES.put("CHICKEN", "\u041A\u0443\u0440\u0438\u0446\u0430");
+        RUS_MOB_NAMES.put("COD", "\u0422\u0440\u0435\u0441\u043A\u0430");
+        RUS_MOB_NAMES.put("COW", "\u041A\u043E\u0440\u043E\u0432\u0430");
+        RUS_MOB_NAMES.put("CREEPER", "\u041A\u0440\u0438\u043F\u0435\u0440");
+        RUS_MOB_NAMES.put("DOLPHIN", "\u0414\u0435\u043B\u044C\u0444\u0438\u043D");
+        RUS_MOB_NAMES.put("DONKEY", "\u041E\u0441\u0451\u043B");
+        RUS_MOB_NAMES.put("DROWNED", "\u0423\u0442\u043E\u043F\u043B\u0435\u043D\u043D\u0438\u043A");
+        RUS_MOB_NAMES.put("ELDER_GUARDIAN", "\u0414\u0440\u0435\u0432\u043D\u0438\u0439 \u0441\u0442\u0440\u0430\u0436");
+        RUS_MOB_NAMES.put("ENDERMAN", "\u042D\u043D\u0434\u0435\u0440\u043C\u0435\u043D");
+        RUS_MOB_NAMES.put("ENDERMITE", "\u042D\u043D\u0434\u0435\u0440\u043C\u0438\u0442");
+        RUS_MOB_NAMES.put("EVOKER", "\u0412\u044B\u0437\u044B\u0432\u0430\u0442\u0435\u043B\u044C");
+        RUS_MOB_NAMES.put("FOX", "\u041B\u0438\u0441\u0430");
+        RUS_MOB_NAMES.put("FROG", "\u041B\u044F\u0433\u0443\u0448\u043A\u0430");
+        RUS_MOB_NAMES.put("GHAST", "\u0413\u0430\u0441\u0442");
+        RUS_MOB_NAMES.put("GLOW_SQUID", "\u0421\u0432\u0435\u0442\u044F\u0449\u0438\u0439\u0441\u044F \u0441\u043F\u0440\u0443\u0442");
+        RUS_MOB_NAMES.put("GOAT", "\u041A\u043E\u0437\u0430");
+        RUS_MOB_NAMES.put("GUARDIAN", "\u0421\u0442\u0440\u0430\u0436");
+        RUS_MOB_NAMES.put("HOGLIN", "\u0425\u043E\u0433\u043B\u0438\u043D");
+        RUS_MOB_NAMES.put("HORSE", "\u041B\u043E\u0448\u0430\u0434\u044C");
+        RUS_MOB_NAMES.put("HUSK", "\u041A\u0430\u0434\u0430\u0432\u0440");
+        RUS_MOB_NAMES.put("ILLUSIONER", "\u0418\u043B\u043B\u044E\u0437\u0438\u043E\u043D\u0438\u0441\u0442");
+        RUS_MOB_NAMES.put("IRON_GOLEM", "\u0416\u0435\u043B\u0435\u0437\u043D\u044B\u0439 \u0433\u043E\u043B\u0435\u043C");
+        RUS_MOB_NAMES.put("LLAMA", "\u041B\u0430\u043C\u0430");
+        RUS_MOB_NAMES.put("MAGMA_CUBE", "\u041C\u0430\u0433\u043C\u043E\u0432\u044B\u0439 \u043A\u0443\u0431");
+        RUS_MOB_NAMES.put("MOOSHROOM", "\u041C\u0443\u0445\u043E\u043C\u043E\u0440\u043A\u0430");
+        RUS_MOB_NAMES.put("MULE", "\u041C\u0443\u043B");
+        RUS_MOB_NAMES.put("OCELOT", "\u041E\u0446\u0435\u043B\u043E\u0442");
+        RUS_MOB_NAMES.put("PANDA", "\u041F\u0430\u043D\u0434\u0430");
+        RUS_MOB_NAMES.put("PARROT", "\u041F\u043E\u043F\u0443\u0433\u0430\u0439");
+        RUS_MOB_NAMES.put("PHANTOM", "\u0424\u0430\u043D\u0442\u043E\u043C");
+        RUS_MOB_NAMES.put("PIG", "\u0421\u0432\u0438\u043D\u044C\u044F");
+        RUS_MOB_NAMES.put("PIGLIN", "\u041F\u0438\u0433\u043B\u0438\u043D");
+        RUS_MOB_NAMES.put("PIGLIN_BRUTE", "\u041F\u0438\u0433\u043B\u0438\u043D-\u0437\u0432\u0435\u0440\u044C");
+        RUS_MOB_NAMES.put("PILLAGER", "\u0420\u0430\u0437\u0431\u043E\u0439\u043D\u0438\u043A");
+        RUS_MOB_NAMES.put("POLAR_BEAR", "\u0411\u0435\u043B\u044B\u0439 \u043C\u0435\u0434\u0432\u0435\u0434\u044C");
+        RUS_MOB_NAMES.put("PUFFERFISH", "\u0420\u044B\u0431\u0430-\u0451\u0436");
+        RUS_MOB_NAMES.put("RABBIT", "\u041A\u0440\u043E\u043B\u0438\u043A");
+        RUS_MOB_NAMES.put("RAVAGER", "\u0420\u0430\u0437\u043E\u0440\u0438\u0442\u0435\u043B\u044C");
+        RUS_MOB_NAMES.put("SALMON", "\u041B\u043E\u0441\u043E\u0441\u044C");
+        RUS_MOB_NAMES.put("SHEEP", "\u041E\u0432\u0446\u0430");
+        RUS_MOB_NAMES.put("SHULKER", "\u0428\u0430\u043B\u043A\u0435\u0440");
+        RUS_MOB_NAMES.put("SILVERFISH", "\u0427\u0435\u0448\u0443\u0439\u043D\u0438\u0446\u0430");
+        RUS_MOB_NAMES.put("SKELETON", "\u0421\u043A\u0435\u043B\u0435\u0442");
+        RUS_MOB_NAMES.put("SKELETON_HORSE", "\u041B\u043E\u0448\u0430\u0434\u044C-\u0441\u043A\u0435\u043B\u0435\u0442");
+        RUS_MOB_NAMES.put("SLIME", "\u0421\u043B\u0438\u0437\u0435\u043D\u044C");
+        RUS_MOB_NAMES.put("SNIFFER", "\u041D\u044E\u0445\u0430\u0447");
+        RUS_MOB_NAMES.put("SNOW_GOLEM", "\u0421\u043D\u0435\u0436\u043D\u044B\u0439 \u0433\u043E\u043B\u0435\u043C");
+        RUS_MOB_NAMES.put("SPIDER", "\u041F\u0430\u0443\u043A");
+        RUS_MOB_NAMES.put("SQUID", "\u0421\u043F\u0440\u0443\u0442");
+        RUS_MOB_NAMES.put("STRAY", "\u0417\u0438\u043C\u043E\u0433\u043E\u0440");
+        RUS_MOB_NAMES.put("STRIDER", "\u041B\u0430\u0432\u043E\u043C\u0435\u0440");
+        RUS_MOB_NAMES.put("TADPOLE", "\u0413\u043E\u043B\u043E\u0432\u0430\u0441\u0442\u0438\u043A");
+        RUS_MOB_NAMES.put("TRADER_LLAMA", "\u041B\u0430\u043C\u0430 \u0442\u043E\u0440\u0433\u043E\u0432\u0446\u0430");
+        RUS_MOB_NAMES.put("TROPICAL_FISH", "\u0422\u0440\u043E\u043F\u0438\u0447\u0435\u0441\u043A\u0430\u044F \u0440\u044B\u0431\u0430");
+        RUS_MOB_NAMES.put("TURTLE", "\u0427\u0435\u0440\u0435\u043F\u0430\u0445\u0430");
+        RUS_MOB_NAMES.put("VEX", "\u0412\u0440\u0435\u0434\u0438\u043D\u0430");
+        RUS_MOB_NAMES.put("VILLAGER", "\u0416\u0438\u0442\u0435\u043B\u044C");
+        RUS_MOB_NAMES.put("VINDICATOR", "\u041F\u043E\u0431\u043E\u0440\u043D\u0438\u043A");
+        RUS_MOB_NAMES.put("WANDERING_TRADER", "\u0421\u0442\u0440\u0430\u043D\u0441\u0442\u0432\u0443\u044E\u0449\u0438\u0439 \u0442\u043E\u0440\u0433\u043E\u0432\u0435\u0446");
+        RUS_MOB_NAMES.put("WARDEN", "\u0412\u0430\u0440\u0434\u0435\u043D");
+        RUS_MOB_NAMES.put("WITCH", "\u0412\u0435\u0434\u044C\u043C\u0430");
+        RUS_MOB_NAMES.put("WITHER", "\u0418\u0441\u0441\u0443\u0448\u0438\u0442\u0435\u043B\u044C");
+        RUS_MOB_NAMES.put("WITHER_SKELETON", "\u0421\u043A\u0435\u043B\u0435\u0442-\u0438\u0441\u0441\u0443\u0448\u0438\u0442\u0435\u043B\u044C");
+        RUS_MOB_NAMES.put("WOLF", "\u0412\u043E\u043B\u043A");
+        RUS_MOB_NAMES.put("ZOGLIN", "\u0417\u043E\u0433\u043B\u0438\u043D");
+        RUS_MOB_NAMES.put("ZOMBIE", "\u0417\u043E\u043C\u0431\u0438");
+        RUS_MOB_NAMES.put("ZOMBIE_HORSE", "\u041B\u043E\u0448\u0430\u0434\u044C-\u0437\u043E\u043C\u0431\u0438");
+        RUS_MOB_NAMES.put("ZOMBIE_VILLAGER", "\u0417\u043E\u043C\u0431\u0438-\u0436\u0438\u0442\u0435\u043B\u044C");
+        RUS_MOB_NAMES.put("ZOMBIFIED_PIGLIN", "\u0417\u043E\u043C\u0431\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 \u043F\u0438\u0433\u043B\u0438\u043D");
     }
 
     private static int parseMobPage(String title) {

@@ -45,10 +45,16 @@ public class ShopCommand implements CommandExecutor, Listener {
 
     private final JavaPlugin plugin;
     private final QuarryManager quarryManager;
+    private final Map<String, org.bukkit.NamespacedKey> exclusiveKeys = new HashMap<>();
 
     public ShopCommand(JavaPlugin plugin, QuarryManager quarryManager) {
         this.plugin = plugin;
         this.quarryManager = quarryManager;
+        exclusiveKeys.put("second_life", new org.bukkit.NamespacedKey(plugin, "excl_second_life"));
+        exclusiveKeys.put("assassin", new org.bukkit.NamespacedKey(plugin, "excl_assassin"));
+        exclusiveKeys.put("horn", new org.bukkit.NamespacedKey(plugin, "excl_horn"));
+        exclusiveKeys.put("shell", new org.bukkit.NamespacedKey(plugin, "excl_shell"));
+        exclusiveKeys.put("boom", new org.bukkit.NamespacedKey(plugin, "excl_boom"));
     }
 
     @Override
@@ -69,7 +75,7 @@ public class ShopCommand implements CommandExecutor, Listener {
         return inv;
     }
 
-    private Inventory buildEnchantMenu() {
+    private Inventory buildEnchantMenu(Player player) {
         Inventory inv = Bukkit.createInventory(null, 27, TITLE_ENCHANTS);
         inv.setItem(10, pricedBook(DrillEnchant.get(), "&6\u0411\u0443\u0440", cost(Material.DIAMOND, 16),
                 List.of(Msg.color("&7\u0411\u0443\u0440\u0438\u0442 \u0431\u043B\u043E\u043A\u0438 \u043D\u0430\u0441\u043A\u0432\u043E\u0437\u044C"))));
@@ -81,16 +87,21 @@ public class ShopCommand implements CommandExecutor, Listener {
                 List.of(Msg.color("&7\u0410\u0432\u0442\u043E\u0441\u0431\u043E\u0440 \u0443\u0440\u043E\u0436\u0430\u044F"))));
         inv.setItem(15, pricedBook(LumberjackEnchant.get(), "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431", cost(Material.DIAMOND, 8),
                 List.of(Msg.color("&7\u0420\u0443\u0431\u0438\u0442 \u0434\u0435\u0440\u0435\u0432\u043E \u0446\u0435\u043B\u0438\u043A\u043E\u043C"))));
-        inv.setItem(16, pricedBook(SecondLifeEnchant.get(), "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C", cost(Material.DIAMOND, 32),
-                List.of(Msg.color("&7\u0421\u043F\u0430\u0441\u0430\u0435\u0442 \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0438 \u0440\u0430\u0437"))));
-        inv.setItem(19, pricedBook(AssassinEnchant.get(), "&6\u0423\u0431\u0438\u0439\u0446\u0430", cost(Material.DIAMOND, 28),
-                List.of(Msg.color("&7\u0414\u0430\u0451\u0442 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u044C \u043F\u043E\u0441\u043B\u0435 \u0443\u0434\u0430\u0440\u0430"))));
-        inv.setItem(20, pricedBook(HornEnchant.get(), "&6\u0420\u043E\u0433", cost(Material.DIAMOND, 24),
-                List.of(Msg.color("&7\u041E\u0442\u0442\u0430\u043B\u043A\u0438\u0432\u0430\u0435\u0442 \u043F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A\u043E\u0432"))));
-        inv.setItem(21, pricedBook(ShellEnchant.get(), "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C", cost(Material.DIAMOND, 24),
-                List.of(Msg.color("&7\u0417\u0430\u0449\u0438\u0442\u0430 \u043D\u0430 \u0448\u0438\u0444\u0442\u0435"))));
-        inv.setItem(22, pricedBook(BoomLeggingsEnchant.get(), "&6\u041F\u043E\u0434\u0440\u044B\u0432", cost(Material.DIAMOND, 24),
-                List.of(Msg.color("&7\u0412\u0437\u0440\u044B\u0432 \u043F\u0440\u0438 \u0432\u044B\u0441\u043E\u043A\u043E\u043C \u0443\u0440\u043E\u043D\u0435"))));
+        inv.setItem(16, exclusiveDisplay(player, "second_life",
+                pricedBook(SecondLifeEnchant.get(), "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C", cost(Material.DIAMOND, 32),
+                        List.of(Msg.color("&7\u0421\u043F\u0430\u0441\u0430\u0435\u0442 \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0438 \u0440\u0430\u0437")))));
+        inv.setItem(19, exclusiveDisplay(player, "assassin",
+                pricedBook(AssassinEnchant.get(), "&6\u0423\u0431\u0438\u0439\u0446\u0430", cost(Material.DIAMOND, 28),
+                        List.of(Msg.color("&7\u0414\u0430\u0451\u0442 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u044C \u043F\u043E\u0441\u043B\u0435 \u0443\u0434\u0430\u0440\u0430")))));
+        inv.setItem(20, exclusiveDisplay(player, "horn",
+                pricedBook(HornEnchant.get(), "&6\u0420\u043E\u0433", cost(Material.DIAMOND, 24),
+                        List.of(Msg.color("&7\u041E\u0442\u0442\u0430\u043B\u043A\u0438\u0432\u0430\u0435\u0442 \u043F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A\u043E\u0432")))));
+        inv.setItem(21, exclusiveDisplay(player, "shell",
+                pricedBook(ShellEnchant.get(), "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C", cost(Material.DIAMOND, 24),
+                        List.of(Msg.color("&7\u0417\u0430\u0449\u0438\u0442\u0430 \u043D\u0430 \u0448\u0438\u0444\u0442\u0435")))));
+        inv.setItem(22, exclusiveDisplay(player, "boom",
+                pricedBook(BoomLeggingsEnchant.get(), "&6\u041F\u043E\u0434\u0440\u044B\u0432", cost(Material.DIAMOND, 24),
+                        List.of(Msg.color("&7\u0412\u0437\u0440\u044B\u0432 \u043F\u0440\u0438 \u0432\u044B\u0441\u043E\u043A\u043E\u043C \u0443\u0440\u043E\u043D\u0435")))));
         inv.setItem(25, item(Material.ARROW, "&e\u041D\u0430\u0437\u0430\u0434"));
         return inv;
     }
@@ -121,7 +132,7 @@ public class ShopCommand implements CommandExecutor, Listener {
 
         if (title.equals(TITLE_MAIN)) {
             if (slot == 11) {
-                player.openInventory(buildEnchantMenu());
+                player.openInventory(buildEnchantMenu(player));
             } else if (slot == 15) {
                 player.openInventory(buildQuarryMenu());
             }
@@ -175,6 +186,7 @@ public class ShopCommand implements CommandExecutor, Listener {
         Enchantment ench;
         String name;
         Map<Material, Integer> cost;
+        String exclusiveKey = null;
         switch (slot) {
             case 10:
                 ench = DrillEnchant.get();
@@ -205,36 +217,82 @@ public class ShopCommand implements CommandExecutor, Listener {
                 ench = SecondLifeEnchant.get();
                 name = "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C";
                 cost = cost(Material.DIAMOND, 32);
+                exclusiveKey = "second_life";
                 break;
             case 19:
                 ench = AssassinEnchant.get();
                 name = "&6\u0423\u0431\u0438\u0439\u0446\u0430";
                 cost = cost(Material.DIAMOND, 28);
+                exclusiveKey = "assassin";
                 break;
             case 20:
                 ench = HornEnchant.get();
                 name = "&6\u0420\u043E\u0433";
                 cost = cost(Material.DIAMOND, 24);
+                exclusiveKey = "horn";
                 break;
             case 21:
                 ench = ShellEnchant.get();
                 name = "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C";
                 cost = cost(Material.DIAMOND, 24);
+                exclusiveKey = "shell";
                 break;
             case 22:
                 ench = BoomLeggingsEnchant.get();
                 name = "&6\u041F\u043E\u0434\u0440\u044B\u0432";
                 cost = cost(Material.DIAMOND, 24);
+                exclusiveKey = "boom";
                 break;
             default:
                 return;
+        }
+        if (exclusiveKey != null && isExclusiveBought(player, exclusiveKey)) {
+            Msg.send(player, "&c\u042D\u0442\u0430 \u043A\u043D\u0438\u0433\u0430 \u0443\u0436\u0435 \u043A\u0443\u043F\u043B\u0435\u043D\u0430.");
+            return;
         }
         if (!takeItems(player, cost)) {
             Msg.send(player, "&c\u041D\u0435\u0445\u0432\u0430\u0442\u0430\u0435\u0442 \u0440\u0435\u0441\u0443\u0440\u0441\u043E\u0432.");
             return;
         }
         player.getInventory().addItem(createBook(ench, name));
+        if (exclusiveKey != null) {
+            markExclusive(player, exclusiveKey);
+            player.openInventory(buildEnchantMenu(player));
+        }
         Msg.send(player, "&a\u041A\u0443\u043F\u043B\u0435\u043D\u043E: " + Msg.color(name));
+    }
+
+    private boolean isExclusiveBought(Player player, String key) {
+        org.bukkit.NamespacedKey ns = exclusiveKeys.get(key);
+        if (ns == null) {
+            return false;
+        }
+        Byte val = player.getPersistentDataContainer().get(ns, org.bukkit.persistence.PersistentDataType.BYTE);
+        return val != null && val == 1;
+    }
+
+    private void markExclusive(Player player, String key) {
+        org.bukkit.NamespacedKey ns = exclusiveKeys.get(key);
+        if (ns == null) {
+            return;
+        }
+        player.getPersistentDataContainer().set(ns, org.bukkit.persistence.PersistentDataType.BYTE, (byte) 1);
+    }
+
+    private ItemStack exclusiveDisplay(Player player, String key, ItemStack item) {
+        if (!isExclusiveBought(player, key)) {
+            return item;
+        }
+        ItemStack it = new ItemStack(Material.BARRIER);
+        ItemMeta meta = it.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(Msg.color("&c\u0423\u0436\u0435 \u043A\u0443\u043F\u043B\u0435\u043D\u043E"));
+            List<String> lore = new ArrayList<>();
+            lore.add(Msg.color("&7\u042D\u0442\u0430 \u043A\u043D\u0438\u0433\u0430 \u043F\u043E\u043A\u0443\u043F\u0430\u0435\u0442\u0441\u044F \u043E\u0434\u0438\u043D \u0440\u0430\u0437."));
+            meta.setLore(lore);
+            it.setItemMeta(meta);
+        }
+        return it;
     }
 
     private Map<Material, Integer> quarryCost1() {
@@ -298,7 +356,7 @@ public class ShopCommand implements CommandExecutor, Listener {
         cost.put(Material.IRON_BLOCK, 16);
         cost.put(Material.DISPENSER, 1);
         cost.put(Material.NETHER_STAR, 2);
-        cost.put(Material.DIAMOND_CHESTPLATE, 1);
+        cost.put(Material.ANCIENT_DEBRIS, 2);
         return cost;
     }
 
@@ -437,7 +495,7 @@ public class ShopCommand implements CommandExecutor, Listener {
             case DISPENSER -> "\u0420\u0430\u0437\u0434\u0430\u0442\u0447\u0438\u043A";
             case NETHER_STAR -> "\u0417\u0432\u0435\u0437\u0434\u0430 \u041D\u0435\u0437\u0435\u0440\u0430";
             case DIAMOND_HELMET -> "\u0410\u043B\u043C\u0430\u0437\u043D\u044B\u0439 \u0448\u043B\u0435\u043C";
-            case DIAMOND_CHESTPLATE -> "\u0410\u043B\u043C\u0430\u0437\u043D\u0430\u044F \u043A\u0438\u0440\u0430\u0441\u0430";
+            case ANCIENT_DEBRIS -> "\u0414\u0440\u0435\u0432\u043D\u0438\u0439 \u043E\u0431\u043B\u043E\u043C\u043E\u043A";
             default -> mat.name().toLowerCase().replace('_', ' ');
         };
     }
