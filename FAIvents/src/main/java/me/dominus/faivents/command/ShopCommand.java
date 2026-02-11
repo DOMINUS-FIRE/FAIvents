@@ -78,42 +78,48 @@ public class ShopCommand implements CommandExecutor, Listener {
 
     private Inventory buildEnchantMenu(Player player) {
         Inventory inv = Bukkit.createInventory(null, 27, TITLE_ENCHANTS);
-        inv.setItem(10, pricedBook(DrillEnchant.get(), "&6\u0411\u0443\u0440", cost(Material.DIAMOND, 16),
-                List.of(Msg.color("&7\u0411\u0443\u0440\u0438\u0442 \u0431\u043B\u043E\u043A\u0438 \u043D\u0430\u0441\u043A\u0432\u043E\u0437\u044C"))));
-        inv.setItem(11, pricedBook(MagnetEnchant.get(), "&6\u041C\u0430\u0433\u043D\u0438\u0442", cost(Material.DIAMOND, 12),
+        inv.setItem(10, pricedBook(DrillEnchant.get(), "&6\u0411\u0443\u0440", enchantCost("drill", cost(Material.DIAMOND, 16)),
+                List.of(Msg.color("&7\u041A\u043E\u043F\u0430\u0435\u0442 3 \u043D\u0430 3"))));
+        inv.setItem(11, pricedBook(MagnetEnchant.get(), "&6\u041C\u0430\u0433\u043D\u0438\u0442", enchantCost("magnet", cost(Material.DIAMOND, 12)),
                 List.of(Msg.color("&7\u041F\u0440\u0438\u0442\u044F\u0433\u0438\u0432\u0430\u0435\u0442 \u0434\u0440\u043E\u043F\u044B \u043A \u0442\u0435\u0431\u0435"))));
-        inv.setItem(12, pricedBook(AutoSmeltEnchant.get(), "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430", cost(Material.DIAMOND, 12),
+        inv.setItem(12, pricedBook(AutoSmeltEnchant.get(), "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430", enchantCost("autosmelt", cost(Material.DIAMOND, 12)),
                 List.of(Msg.color("&7\u041F\u043B\u0430\u0432\u0438\u0442 \u0434\u043E\u0431\u044B\u0442\u044B\u0435 \u0440\u0443\u0434\u044B"))));
-        inv.setItem(14, pricedBook(FarmerEnchant.get(), "&6\u0424\u0435\u0440\u043C\u0435\u0440", cost(Material.DIAMOND, 12),
-                List.of(Msg.color("&7\u0410\u0432\u0442\u043E\u0441\u0431\u043E\u0440 \u0443\u0440\u043E\u0436\u0430\u044F"))));
-        inv.setItem(15, pricedBook(LumberjackEnchant.get(), "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431", cost(Material.DIAMOND, 8),
+        inv.setItem(14, pricedBook(FarmerEnchant.get(), "&6\u0424\u0435\u0440\u043C\u0435\u0440", enchantCost("farmer", cost(Material.DIAMOND, 12)),
+                List.of(
+                        Msg.color("&7\u0428\u0438\u0444\u0442: \u043A\u043E\u0441\u0442\u043D\u0430\u044F \u043C\u0443\u043A\u0430 3x3"),
+                        Msg.color("&7\u0410\u0432\u0442\u043E \u043F\u043E\u0441\u0430\u0434\u043A\u0430 \u0441\u0435\u043C\u044F\u043D")
+                )));
+        inv.setItem(15, pricedBook(LumberjackEnchant.get(), "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431", enchantCost("lumberjack", cost(Material.DIAMOND, 8)),
                 List.of(Msg.color("&7\u0421\u0440\u0443\u0431\u0430\u0435\u0442 \u0434\u0435\u0440\u0435\u0432\u043E \u0446\u0435\u043B\u0438\u043A\u043E\u043C"))));
         inv.setItem(16, exclusiveDisplay(player, "second_life",
-                pricedBook(SecondLifeEnchant.get(), "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C", cost(Material.DIAMOND, 32),
+                pricedBook(SecondLifeEnchant.get(), "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C", enchantCost("second_life", cost(Material.DIAMOND, 32)),
                         List.of(Msg.color("&7\u0421\u043F\u0430\u0441\u0430\u0435\u0442 \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0438 \u0438 \u043B\u0435\u0447\u0438\u0442")))));
         inv.setItem(19, exclusiveDisplay(player, "assassin",
-                pricedBook(AssassinEnchant.get(), "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D", cost(Material.DIAMOND, 28),
-                        List.of(Msg.color("&7\u0414\u0430\u0451\u0442 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u044C \u043F\u043E\u0441\u043B\u0435 \u0443\u0434\u0430\u0440\u0430")))));
+                pricedBook(AssassinEnchant.get(), "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D", enchantCost("assassin", cost(Material.DIAMOND, 28)),
+                        List.of(
+                                Msg.color("&7\u041D\u0435\u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u044C \u043D\u0430 \u0448\u0438\u0444\u0442\u0435"),
+                                Msg.color("&7\u041F\u043E\u0441\u0442\u043E\u044F\u043D\u043D\u043E\u0435 \u043D\u043E\u0447\u043D\u043E\u0435 \u0437\u0440\u0435\u043D\u0438\u0435")
+                        ))));
         inv.setItem(20, exclusiveDisplay(player, "horn",
-                pricedBook(HornEnchant.get(), "&6\u0420\u043E\u0433", cost(Material.DIAMOND, 24),
-                        List.of(Msg.color("&7\u041E\u0442\u0442\u0430\u043B\u043A\u0438\u0432\u0430\u0435\u0442 \u043F\u0440\u043E\u0442\u0438\u0432\u043D\u0438\u043A\u043E\u0432")))));
+                pricedBook(HornEnchant.get(), "&6\u0420\u043E\u0433", enchantCost("horn", cost(Material.DIAMOND, 24)),
+                        List.of(Msg.color("&7\u042D\u0444\u0444\u0435\u043A\u0442 \u0437\u043E\u043B\u043E\u0442\u043E\u0433\u043E \u044F\u0431\u043B\u043E\u043A\u0430")))));
         inv.setItem(21, exclusiveDisplay(player, "shell",
-                pricedBook(ShellEnchant.get(), "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C", cost(Material.DIAMOND, 24),
+                pricedBook(ShellEnchant.get(), "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C", enchantCost("shell", cost(Material.DIAMOND, 24)),
                         List.of(Msg.color("&7\u0417\u0430\u0449\u0438\u0442\u0430 \u043D\u0430 \u0448\u0438\u0444\u0442\u0435")))));
         inv.setItem(22, exclusiveDisplay(player, "boom",
-                pricedBook(BoomLeggingsEnchant.get(), "&6\u041F\u043E\u0434\u0440\u044B\u0432", cost(Material.DIAMOND, 24),
-                        List.of(Msg.color("&7\u0412\u0437\u0440\u044B\u0432 \u043F\u0440\u0438 \u0432\u044B\u0441\u043E\u043A\u043E\u043C \u0443\u0440\u043E\u043D\u0435")))));
+                pricedBook(BoomLeggingsEnchant.get(), "&6\u041F\u043E\u0434\u0440\u044B\u0432", enchantCost("boom", cost(Material.DIAMOND, 24)),
+                        List.of(Msg.color("&7\u0412\u0437\u0440\u044B\u0432\u043D\u044B\u0435 \u0441\u0442\u0440\u0435\u043B\u044B")))));
         inv.setItem(25, item(Material.ARROW, "&e\u041D\u0430\u0437\u0430\u0434"));
         return inv;
     }
 
     private Inventory buildQuarryMenu() {
         Inventory inv = Bukkit.createInventory(null, 27, TITLE_QUARRY);
-        inv.setItem(11, pricedItem(quarryManager.createQuarryItem(1), "&a\u041A\u0430\u0440\u044C\u0435\u0440 I", quarryCost1(), quarryFeatures(1)));
-        inv.setItem(12, pricedItem(quarryManager.createQuarryItem(2), "&a\u041A\u0430\u0440\u044C\u0435\u0440 II", quarryCost2(), quarryFeatures(2)));
-        inv.setItem(13, pricedItem(quarryManager.createQuarryItem(3), "&a\u041A\u0430\u0440\u044C\u0435\u0440 III", quarryCost3(), quarryFeatures(3)));
-        inv.setItem(14, pricedItem(quarryManager.createQuarryItem(4), "&a\u041A\u0430\u0440\u044C\u0435\u0440 IV", quarryCost4(), quarryFeatures(4)));
-        inv.setItem(15, pricedItem(quarryManager.createQuarryItem(5), "&a\u041A\u0430\u0440\u044C\u0435\u0440 V", quarryCost5(), quarryFeatures(5)));
+        inv.setItem(11, pricedItem(quarryManager.createQuarryItem(1), "&a\u041A\u0430\u0440\u044C\u0435\u0440 I", quarryCost(1, quarryCost1()), quarryFeatures(1)));
+        inv.setItem(12, pricedItem(quarryManager.createQuarryItem(2), "&a\u041A\u0430\u0440\u044C\u0435\u0440 II", quarryCost(2, quarryCost2()), quarryFeatures(2)));
+        inv.setItem(13, pricedItem(quarryManager.createQuarryItem(3), "&a\u041A\u0430\u0440\u044C\u0435\u0440 III", quarryCost(3, quarryCost3()), quarryFeatures(3)));
+        inv.setItem(14, pricedItem(quarryManager.createQuarryItem(4), "&a\u041A\u0430\u0440\u044C\u0435\u0440 IV", quarryCost(4, quarryCost4()), quarryFeatures(4)));
+        inv.setItem(15, pricedItem(quarryManager.createQuarryItem(5), "&a\u041A\u0430\u0440\u044C\u0435\u0440 V", quarryCost(5, quarryCost5()), quarryFeatures(5)));
         inv.setItem(25, item(Material.ARROW, "&e\u041D\u0430\u0437\u0430\u0434"));
         return inv;
     }
@@ -158,19 +164,19 @@ public class ShopCommand implements CommandExecutor, Listener {
             Map<Material, Integer> cost = null;
             if (slot == 11) {
                 level = 1;
-                cost = quarryCost1();
+                cost = quarryCost(1, quarryCost1());
             } else if (slot == 12) {
                 level = 2;
-                cost = quarryCost2();
+                cost = quarryCost(2, quarryCost2());
             } else if (slot == 13) {
                 level = 3;
-                cost = quarryCost3();
+                cost = quarryCost(3, quarryCost3());
             } else if (slot == 14) {
                 level = 4;
-                cost = quarryCost4();
+                cost = quarryCost(4, quarryCost4());
             } else if (slot == 15) {
                 level = 5;
-                cost = quarryCost5();
+                cost = quarryCost(5, quarryCost5());
             }
             if (level > 0) {
                 if (!takeItems(player, cost)) {
@@ -192,56 +198,56 @@ public class ShopCommand implements CommandExecutor, Listener {
             case 10:
                 ench = DrillEnchant.get();
                 name = "&6\u0411\u0443\u0440";
-                cost = cost(Material.DIAMOND, 16);
+                cost = enchantCost("drill", cost(Material.DIAMOND, 16));
                 break;
             case 11:
                 ench = MagnetEnchant.get();
                 name = "&6\u041C\u0430\u0433\u043D\u0438\u0442";
-                cost = cost(Material.DIAMOND, 12);
+                cost = enchantCost("magnet", cost(Material.DIAMOND, 12));
                 break;
             case 12:
                 ench = AutoSmeltEnchant.get();
                 name = "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430";
-                cost = cost(Material.DIAMOND, 12);
+                cost = enchantCost("autosmelt", cost(Material.DIAMOND, 12));
                 break;
             case 14:
                 ench = FarmerEnchant.get();
                 name = "&6\u0424\u0435\u0440\u043C\u0435\u0440";
-                cost = cost(Material.DIAMOND, 12);
+                cost = enchantCost("farmer", cost(Material.DIAMOND, 12));
                 break;
             case 15:
                 ench = LumberjackEnchant.get();
                 name = "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431";
-                cost = cost(Material.DIAMOND, 8);
+                cost = enchantCost("lumberjack", cost(Material.DIAMOND, 8));
                 break;
             case 16:
                 ench = SecondLifeEnchant.get();
                 name = "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C";
-                cost = cost(Material.DIAMOND, 32);
+                cost = enchantCost("second_life", cost(Material.DIAMOND, 32));
                 exclusiveKey = "second_life";
                 break;
             case 19:
                 ench = AssassinEnchant.get();
                 name = "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D";
-                cost = cost(Material.DIAMOND, 28);
+                cost = enchantCost("assassin", cost(Material.DIAMOND, 28));
                 exclusiveKey = "assassin";
                 break;
             case 20:
                 ench = HornEnchant.get();
                 name = "&6\u0420\u043E\u0433";
-                cost = cost(Material.DIAMOND, 24);
+                cost = enchantCost("horn", cost(Material.DIAMOND, 24));
                 exclusiveKey = "horn";
                 break;
             case 21:
                 ench = ShellEnchant.get();
                 name = "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C";
-                cost = cost(Material.DIAMOND, 24);
+                cost = enchantCost("shell", cost(Material.DIAMOND, 24));
                 exclusiveKey = "shell";
                 break;
             case 22:
                 ench = BoomLeggingsEnchant.get();
                 name = "&6\u041F\u043E\u0434\u0440\u044B\u0432";
-                cost = cost(Material.DIAMOND, 24);
+                cost = enchantCost("boom", cost(Material.DIAMOND, 24));
                 exclusiveKey = "boom";
                 break;
             default:
@@ -365,6 +371,36 @@ public class ShopCommand implements CommandExecutor, Listener {
         Map<Material, Integer> map = new EnumMap<>(Material.class);
         map.put(mat, amount);
         return map;
+    }
+
+    private Map<Material, Integer> enchantCost(String key, Map<Material, Integer> fallback) {
+        return loadCost("shop.prices.enchants." + key, fallback);
+    }
+
+    private Map<Material, Integer> quarryCost(int level, Map<Material, Integer> fallback) {
+        return loadCost("shop.prices.quarry." + level, fallback);
+    }
+
+    private Map<Material, Integer> loadCost(String path, Map<Material, Integer> fallback) {
+        if (plugin.getConfig() == null) {
+            return fallback;
+        }
+        org.bukkit.configuration.ConfigurationSection sec = plugin.getConfig().getConfigurationSection(path);
+        if (sec == null) {
+            return fallback;
+        }
+        Map<Material, Integer> map = new EnumMap<>(Material.class);
+        for (String key : sec.getKeys(false)) {
+            Material mat = Material.matchMaterial(key);
+            if (mat == null) {
+                continue;
+            }
+            int amount = sec.getInt(key, 0);
+            if (amount > 0) {
+                map.put(mat, amount);
+            }
+        }
+        return map.isEmpty() ? fallback : map;
     }
 
     private boolean takeItems(Player player, Map<Material, Integer> cost) {
