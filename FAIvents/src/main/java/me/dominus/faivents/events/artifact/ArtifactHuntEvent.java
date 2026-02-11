@@ -66,7 +66,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
     @Override
     public boolean start(CommandSender sender, String[] args) {
         if (args.length >= 3 && !"all".equalsIgnoreCase(args[2])) {
-            Msg.send(sender, "&c\u0420\u0452\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A \u0420\u0405\u0420\u00B5\u0420\u00BB\u0421\u040A\u0420\u00B7\u0421\u040F \u0421\u0403\u0420\u0457\u0420\u00B0\u0420\u0406\u0420\u0405\u0420\u0451\u0421\u201A\u0421\u040A \u0420\u0405\u0420\u00B0 \u0420\u0451\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454\u0420\u00B5.");
+            Msg.send(sender, "&c\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442 \u043D\u0435\u043B\u044C\u0437\u044F \u0441\u043F\u0430\u0432\u043D\u0438\u0442\u044C \u043D\u0430 \u0438\u0433\u0440\u043E\u043A\u0435.");
             return false;
         }
 
@@ -87,7 +87,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         }
 
         if (count == 0 || world == null) {
-            Msg.send(sender, "&c\u0420\u045C\u0420\u00B5\u0421\u201A \u0420\u0451\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454\u0420\u0455\u0420\u0406 \u0420\u0406 \u0420\u0455\u0420\u00B1\u0421\u2039\u0421\u2021\u0420\u0405\u0420\u0455\u0420\u0458 \u0420\u0458\u0420\u0451\u0421\u0402\u0420\u00B5.");
+            Msg.send(sender, "&c\u041D\u0435\u0442 \u0438\u0433\u0440\u043E\u043A\u043E\u0432 \u0432 \u043E\u0431\u044B\u0447\u043D\u043E\u043C \u043C\u0438\u0440\u0435.");
             return false;
         }
 
@@ -103,7 +103,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         artifactBlock = ConfigUtil.getMaterial(plugin.getConfig().getString("artifact_hunt.artifact_block"), Material.BEACON);
         artifactLoc = SafeWorldEdit.getHighestSafe(world, x, z);
         if (artifactLoc == null) {
-            Msg.send(sender, "&c\u0420\u045C\u0420\u00B5 \u0421\u0453\u0420\u0491\u0420\u00B0\u0420\u00BB\u0420\u0455\u0421\u0403\u0421\u040A \u0420\u0405\u0420\u00B0\u0420\u2116\u0421\u201A\u0420\u0451 \u0420\u0458\u0420\u00B5\u0421\u0403\u0421\u201A\u0420\u0455 \u0420\u0491\u0420\u00BB\u0421\u040F \u0420\u00B0\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u00B0.");
+            Msg.send(sender, "&c\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043D\u0430\u0439\u0442\u0438 \u043C\u0435\u0441\u0442\u043E \u0434\u043B\u044F \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430.");
             return false;
         }
 
@@ -114,7 +114,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         giveCompasses();
 
         if (plugin.getConfig().getBoolean("artifact_hunt.announce_pvp_rule_only", true)) {
-            Msg.send(sender, "&ePvP \u0420\u0405\u0420\u00B0 \u0420\u0406\u0421\u0402\u0420\u00B5\u0420\u0458\u0421\u040F \u0420\u0451\u0420\u0406\u0420\u00B5\u0420\u0405\u0421\u201A\u0420\u00B0 \u0420\u0405\u0420\u00B5 \u0420\u0458\u0420\u00B5\u0420\u0405\u0421\u040F\u0420\u00B5\u0421\u201A\u0421\u0403\u0421\u040F. \u0420\u00AD\u0421\u201A\u0420\u0455 \u0421\u201A\u0420\u0455\u0420\u00BB\u0421\u040A\u0420\u0454\u0420\u0455 \u0420\u0451\u0420\u0405\u0421\u201E\u0420\u0455\u0421\u0402\u0420\u0458\u0420\u00B0\u0421\u2020\u0420\u0451\u0421\u040F.");
+            Msg.send(sender, "&ePvP \u043D\u0430 \u0432\u0440\u0435\u043C\u044F \u0438\u0432\u0435\u043D\u0442\u0430 \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F. \u042D\u0442\u043E \u0442\u043E\u043B\u044C\u043A\u043E \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F.");
         }
 
         int durationMin = plugin.getConfig().getInt("artifact_hunt.duration_minutes", 15);
@@ -135,7 +135,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         }, durationMin * 60L * 20L);
 
         running = true;
-        Msg.send(sender, "&a\u0420\u045B\u0421\u2026\u0420\u0455\u0421\u201A\u0420\u00B0 \u0420\u00B7\u0420\u00B0 \u0420\u00B0\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0455\u0420\u0458 \u0420\u0405\u0420\u00B0\u0421\u2021\u0420\u00B0\u0420\u00BB\u0420\u00B0\u0421\u0403\u0421\u040A!");
+        Msg.send(sender, "&a\u041E\u0445\u043E\u0442\u0430 \u0437\u0430 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u043E\u043C \u043D\u0430\u0447\u0430\u043B\u0430\u0441\u044C!");
         return true;
     }
 
@@ -328,14 +328,14 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         for (ItemStack item : loot) {
             player.getInventory().addItem(item);
         }
-        Bukkit.broadcastMessage(Msg.color("&6[FAIvents]&r &a" + player.getName() + " \u0420\u0405\u0420\u00B0\u0421\u20AC\u0420\u00B5\u0420\u00BB \u0420\u00B0\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A!"));
+        Bukkit.broadcastMessage(Msg.color("&6[FAIvents]&r &a" + player.getName() + " \u043D\u0430\u0448\u0435\u043B \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442!"));
         stop(null);
     }
     private void startBossBar(int totalSeconds) {
         if (bossBar != null) {
             bossBar.removeAll();
         }
-        bossBar = Bukkit.createBossBar(Msg.color("&6\u0420\u0452\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A: " + formatTime(totalSeconds)), BarColor.YELLOW, BarStyle.SEGMENTED_10);
+        bossBar = Bukkit.createBossBar(Msg.color("&6\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442: " + formatTime(totalSeconds)), BarColor.YELLOW, BarStyle.SEGMENTED_10);
         for (Player p : Bukkit.getOnlinePlayers()) {
             bossBar.addPlayer(p);
         }
@@ -356,7 +356,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
                     return;
                 }
                 bossBar.setProgress(Math.max(0.0, Math.min(1.0, (double) left / (double) totalSeconds)));
-                bossBar.setTitle(Msg.color("&6\u0420\u0452\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A: " + formatTime(left)));
+                bossBar.setTitle(Msg.color("&6\u0410\u0440\u0442\u0435\u0444\u0430\u043A\u0442: " + formatTime(left)));
                 left--;
             }
         }.runTaskTimer(plugin, 0L, 20L);
@@ -393,7 +393,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         removeCompasses();
         restoreBlocks();
         if (sender != null) {
-            Msg.send(sender, "&e\u0420\u045B\u0421\u2026\u0420\u0455\u0421\u201A\u0420\u00B0 \u0420\u00B7\u0420\u00B0 \u0420\u00B0\u0421\u0402\u0421\u201A\u0420\u00B5\u0421\u201E\u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0455\u0420\u0458 \u0420\u00B7\u0420\u00B0\u0420\u0406\u0420\u00B5\u0421\u0402\u0421\u20AC\u0420\u00B5\u0420\u0405\u0420\u00B0.");
+            Msg.send(sender, "&e\u041E\u0445\u043E\u0442\u0430 \u0437\u0430 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u043E\u043C \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0430.");
         }
         plugin.getEventManager().onEventStopped(getId());
     }
@@ -407,7 +407,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
 
     @Override
     public void status(CommandSender sender) {
-        Msg.send(sender, running ? "&a\u0420\u045B\u0421\u2026\u0420\u0455\u0421\u201A\u0420\u00B0 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u00B0." : "&e\u0420\u045B\u0421\u2026\u0420\u0455\u0421\u201A\u0420\u00B0 \u0420\u0405\u0420\u00B5 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u00B0.");
+        Msg.send(sender, running ? "&a\u041E\u0445\u043E\u0442\u0430 \u0430\u043A\u0442\u0438\u0432\u043D\u0430." : "&e\u041E\u0445\u043E\u0442\u0430 \u043D\u0435 \u0430\u043A\u0442\u0438\u0432\u043D\u0430.");
     }
 
     @Override

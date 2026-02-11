@@ -83,16 +83,16 @@ public class ShopCommand implements CommandExecutor, Listener {
         inv.setItem(11, pricedBook(MagnetEnchant.get(), "&6\u041C\u0430\u0433\u043D\u0438\u0442", cost(Material.DIAMOND, 12),
                 List.of(Msg.color("&7\u041F\u0440\u0438\u0442\u044F\u0433\u0438\u0432\u0430\u0435\u0442 \u0434\u0440\u043E\u043F\u044B \u043A \u0442\u0435\u0431\u0435"))));
         inv.setItem(12, pricedBook(AutoSmeltEnchant.get(), "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430", cost(Material.DIAMOND, 12),
-                List.of(Msg.color("&7\u0421\u0440\u0430\u0437\u0443 \u043F\u043B\u0430\u0432\u0438\u0442 \u0440\u0443\u0434\u0443"))));
+                List.of(Msg.color("&7\u041F\u043B\u0430\u0432\u0438\u0442 \u0434\u043E\u0431\u044B\u0442\u044B\u0435 \u0440\u0443\u0434\u044B"))));
         inv.setItem(14, pricedBook(FarmerEnchant.get(), "&6\u0424\u0435\u0440\u043C\u0435\u0440", cost(Material.DIAMOND, 12),
                 List.of(Msg.color("&7\u0410\u0432\u0442\u043E\u0441\u0431\u043E\u0440 \u0443\u0440\u043E\u0436\u0430\u044F"))));
         inv.setItem(15, pricedBook(LumberjackEnchant.get(), "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431", cost(Material.DIAMOND, 8),
-                List.of(Msg.color("&7\u0420\u0443\u0431\u0438\u0442 \u0434\u0435\u0440\u0435\u0432\u043E \u0446\u0435\u043B\u0438\u043A\u043E\u043C"))));
+                List.of(Msg.color("&7\u0421\u0440\u0443\u0431\u0430\u0435\u0442 \u0434\u0435\u0440\u0435\u0432\u043E \u0446\u0435\u043B\u0438\u043A\u043E\u043C"))));
         inv.setItem(16, exclusiveDisplay(player, "second_life",
                 pricedBook(SecondLifeEnchant.get(), "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C", cost(Material.DIAMOND, 32),
-                        List.of(Msg.color("&7\u0421\u043F\u0430\u0441\u0430\u0435\u0442 \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0438 \u0440\u0430\u0437")))));
+                        List.of(Msg.color("&7\u0421\u043F\u0430\u0441\u0430\u0435\u0442 \u043E\u0442 \u0441\u043C\u0435\u0440\u0442\u0438 \u0438 \u043B\u0435\u0447\u0438\u0442")))));
         inv.setItem(19, exclusiveDisplay(player, "assassin",
-                pricedBook(AssassinEnchant.get(), "&6\u0423\u0431\u0438\u0439\u0446\u0430", cost(Material.DIAMOND, 28),
+                pricedBook(AssassinEnchant.get(), "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D", cost(Material.DIAMOND, 28),
                         List.of(Msg.color("&7\u0414\u0430\u0451\u0442 \u043D\u0435\u0432\u0438\u0434\u0438\u043C\u043E\u0441\u0442\u044C \u043F\u043E\u0441\u043B\u0435 \u0443\u0434\u0430\u0440\u0430")))));
         inv.setItem(20, exclusiveDisplay(player, "horn",
                 pricedBook(HornEnchant.get(), "&6\u0420\u043E\u0433", cost(Material.DIAMOND, 24),
@@ -222,7 +222,7 @@ public class ShopCommand implements CommandExecutor, Listener {
                 break;
             case 19:
                 ench = AssassinEnchant.get();
-                name = "&6\u0423\u0431\u0438\u0439\u0446\u0430";
+                name = "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D";
                 cost = cost(Material.DIAMOND, 28);
                 exclusiveKey = "assassin";
                 break;
@@ -329,7 +329,7 @@ public class ShopCommand implements CommandExecutor, Listener {
         cost.put(Material.DIAMOND_PICKAXE, 1);
         cost.put(Material.IRON_BLOCK, 8);
         cost.put(Material.DISPENSER, 1);
-        cost.put(Material.NETHER_STAR, 1);
+        cost.put(Material.WITHER_SKELETON_SKULL, 1);
         return cost;
     }
 
@@ -342,7 +342,7 @@ public class ShopCommand implements CommandExecutor, Listener {
         cost.put(Material.DIAMOND_PICKAXE, 1);
         cost.put(Material.IRON_BLOCK, 12);
         cost.put(Material.DISPENSER, 1);
-        cost.put(Material.NETHER_STAR, 1);
+        cost.put(Material.WITHER_SKELETON_SKULL, 1);
         cost.put(Material.DIAMOND_HELMET, 1);
         return cost;
     }
@@ -356,7 +356,7 @@ public class ShopCommand implements CommandExecutor, Listener {
         cost.put(Material.DIAMOND_PICKAXE, 1);
         cost.put(Material.IRON_BLOCK, 16);
         cost.put(Material.DISPENSER, 1);
-        cost.put(Material.NETHER_STAR, 2);
+        cost.put(Material.WITHER_SKELETON_SKULL, 2);
         cost.put(Material.ANCIENT_DEBRIS, 2);
         return cost;
     }
@@ -472,7 +472,7 @@ public class ShopCommand implements CommandExecutor, Listener {
             lore.add(Msg.color("&7\u0422\u043E\u043F\u043B\u0438\u0432\u043E: &f\u043F\u0435\u0447\u043D\u043E\u0435 + \u0432\u043E\u0434\u0430"));
             lore.add(Msg.color("&7\u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435: &f6 \u0440\u044F\u0434\u043E\u0432"));
         } else if (level == 3) {
-            lore.add(Msg.color("&7\u0421\u043E\u043B\u043D\u0435\u0447\u043D\u043E\u0435 \u043F\u0438\u0442\u0430\u043D\u0438\u0435"));
+            lore.add(Msg.color("&7\u041F\u0438\u0442\u0430\u043D\u0438\u0435: &f\u0441\u043E\u043B\u043D\u0446\u0435"));
             lore.add(Msg.color("&7\u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435: &f18 \u0440\u044F\u0434\u043E\u0432"));
         } else if (level == 4) {
             lore.add(Msg.color("&7\u0424\u0438\u043B\u044C\u0442\u0440 \u0438 \u0448\u0451\u043B\u043A\u043E\u0432\u043E\u0435 \u043A\u0430\u0441\u0430\u043D\u0438\u0435"));
@@ -494,7 +494,7 @@ public class ShopCommand implements CommandExecutor, Listener {
             case IRON_INGOT -> "\u0416\u0435\u043B\u0435\u0437\u043D\u044B\u0439 \u0441\u043B\u0438\u0442\u043E\u043A";
             case DIAMOND_PICKAXE -> "\u0410\u043B\u043C\u0430\u0437\u043D\u0430\u044F \u043A\u0438\u0440\u043A\u0430";
             case DISPENSER -> "\u0420\u0430\u0437\u0434\u0430\u0442\u0447\u0438\u043A";
-            case NETHER_STAR -> "\u0417\u0432\u0435\u0437\u0434\u0430 \u041D\u0435\u0437\u0435\u0440\u0430";
+            case WITHER_SKELETON_SKULL -> "\u0427\u0435\u0440\u0435\u043F \u0438\u0441\u0441\u0443\u0448\u0438\u0442\u0435\u043B\u044F";
             case DIAMOND_HELMET -> "\u0410\u043B\u043C\u0430\u0437\u043D\u044B\u0439 \u0448\u043B\u0435\u043C";
             case ANCIENT_DEBRIS -> "\u0414\u0440\u0435\u0432\u043D\u0438\u0439 \u043E\u0431\u043B\u043E\u043C\u043E\u043A";
             default -> mat.name().toLowerCase().replace('_', ' ');

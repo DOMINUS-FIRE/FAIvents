@@ -70,7 +70,7 @@ public class RealityGlitchEvent implements EventManager.EventController {
             } else {
                 Player p = Bukkit.getPlayerExact(args[2]);
                 if (p == null) {
-                    Msg.send(sender, "&c\u0420\u0098\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454 \u0420\u0405\u0420\u00B5 \u0420\u0405\u0420\u00B0\u0420\u2116\u0420\u0491\u0420\u00B5\u0420\u0405.");
+                    Msg.send(sender, "&c\u0418\u0433\u0440\u043E\u043A \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.");
                     return false;
                 }
                 targets = List.of(p);
@@ -96,7 +96,7 @@ public class RealityGlitchEvent implements EventManager.EventController {
         startBossBar(targets, durationSeconds);
         startVisuals(targets);
 
-        Msg.send(sender, "&a\u0420\u0098\u0421\u0403\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0421\u0402\u0420\u00B5\u0420\u00B0\u0420\u00BB\u0421\u040A\u0420\u0405\u0420\u0455\u0421\u0403\u0421\u201A\u0420\u0451 \u0420\u0405\u0420\u00B0\u0421\u2021\u0420\u00B0\u0420\u00BB\u0420\u0455\u0421\u0403\u0421\u040A \u0420\u0405\u0420\u00B0 " + durationMin + " \u0420\u0458\u0420\u0451\u0420\u0405.");
+        Msg.send(sender, "&a\u0418\u0441\u043A\u0430\u0436\u0435\u043D\u0438\u0435 \u0440\u0435\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438 \u043D\u0430\u0447\u0430\u043B\u043E\u0441\u044C \u043D\u0430 " + durationMin + " \u043C\u0438\u043D.");
         return true;
     }
 
@@ -214,7 +214,7 @@ public class RealityGlitchEvent implements EventManager.EventController {
         if (bossBar != null) {
             bossBar.removeAll();
         }
-        bossBar = Bukkit.createBossBar(Msg.color("&b\u0420\u0098\u0421\u0403\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5: " + formatTime(totalSeconds)), BarColor.BLUE, BarStyle.SEGMENTED_10);
+        bossBar = Bukkit.createBossBar(Msg.color("&b\u0418\u0441\u043A\u0430\u0436\u0435\u043D\u0438\u0435: " + formatTime(totalSeconds)), BarColor.BLUE, BarStyle.SEGMENTED_10);
         for (Player p : targets) {
             bossBar.addPlayer(p);
         }
@@ -235,7 +235,7 @@ public class RealityGlitchEvent implements EventManager.EventController {
                     return;
                 }
                 bossBar.setProgress(Math.max(0.0, Math.min(1.0, (double) left / (double) totalSeconds)));
-                bossBar.setTitle(Msg.color("&b\u0420\u0098\u0421\u0403\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5: " + formatTime(left)));
+                bossBar.setTitle(Msg.color("&b\u0418\u0441\u043A\u0430\u0436\u0435\u043D\u0438\u0435: " + formatTime(left)));
                 left--;
             }
         }.runTaskTimer(plugin, 0L, 20L);
@@ -296,14 +296,14 @@ public class RealityGlitchEvent implements EventManager.EventController {
         stored.clear();
         affected.clear();
         if (sender != null) {
-            Msg.send(sender, "&e\u0420\u0098\u0421\u0403\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0421\u0402\u0420\u00B5\u0420\u00B0\u0420\u00BB\u0421\u040A\u0420\u0405\u0420\u0455\u0421\u0403\u0421\u201A\u0420\u0451 \u0420\u00B7\u0420\u00B0\u0420\u0406\u0420\u00B5\u0421\u0402\u0421\u20AC\u0420\u00B5\u0420\u0405\u0420\u0455.");
+            Msg.send(sender, "&e\u0418\u0441\u043A\u0430\u0436\u0435\u043D\u0438\u0435 \u0440\u0435\u0430\u043B\u044C\u043D\u043E\u0441\u0442\u0438 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043E.");
         }
         plugin.getEventManager().onEventStopped(getId());
     }
 
     @Override
     public void status(CommandSender sender) {
-        Msg.send(sender, running ? "&a\u0420\u0098\u0421\u0403\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u0455." : "&e\u0420\u0098\u0421\u0403\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0420\u0405\u0420\u00B5 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u0455.");
+        Msg.send(sender, running ? "&a\u0418\u0441\u043A\u0430\u0436\u0435\u043D\u0438\u0435 \u0430\u043A\u0442\u0438\u0432\u043D\u043E." : "&e\u0418\u0441\u043A\u0430\u0436\u0435\u043D\u0438\u0435 \u043D\u0435 \u0430\u043A\u0442\u0438\u0432\u043D\u043E.");
     }
 
     @Override

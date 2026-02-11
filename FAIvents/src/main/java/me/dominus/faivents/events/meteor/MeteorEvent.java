@@ -70,7 +70,7 @@ public class MeteorEvent implements EventManager.EventController {
     @Override
     public boolean start(CommandSender sender, String[] args) {
         if (running) {
-            Msg.send(sender, "&e\u0420\u0098\u0420\u0406\u0420\u00B5\u0420\u0405\u0421\u201A \u0421\u0453\u0420\u00B6\u0420\u00B5 \u0420\u00B7\u0420\u00B0\u0420\u0457\u0421\u0453\u0421\u2030\u0420\u00B5\u0420\u0405.");
+            Msg.send(sender, "&e\u0418\u0432\u0435\u043D\u0442 \u0443\u0436\u0435 \u0437\u0430\u043F\u0443\u0449\u0435\u043D.");
             return false;
         }
         pendingTargets.clear();
@@ -84,7 +84,7 @@ public class MeteorEvent implements EventManager.EventController {
             } else {
                 Player p = Bukkit.getPlayerExact(args[2]);
                 if (p == null) {
-                    Msg.send(sender, "&c\u0420\u0098\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454 \u0420\u0405\u0420\u00B5 \u0420\u0405\u0420\u00B0\u0420\u2116\u0420\u0491\u0420\u00B5\u0420\u0405.");
+                    Msg.send(sender, "&c\u0418\u0433\u0440\u043E\u043A \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.");
                     return false;
                 }
                 pendingTargets.add(p.getUniqueId());
@@ -92,7 +92,7 @@ public class MeteorEvent implements EventManager.EventController {
         } else if (sender instanceof Player) {
             pendingTargets.add(((Player) sender).getUniqueId());
         } else {
-            Msg.send(sender, "&c\u0420\u0408\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u0451\u0421\u201A\u0420\u00B5 \u0420\u0451\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454\u0420\u00B0 \u0420\u0451\u0420\u00BB\u0420\u0451 all.");
+            Msg.send(sender, "&c\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u0438\u0433\u0440\u043E\u043A\u0430 \u0438\u043B\u0438 all.");
             return false;
         }
 
@@ -132,7 +132,7 @@ public class MeteorEvent implements EventManager.EventController {
         }
 
         startFlight(world, target.clone());
-        Msg.send(lastSender != null ? lastSender : player, "&a\u0420\u045A\u0420\u00B5\u0421\u201A\u0420\u00B5\u0420\u0455\u0421\u0402 \u0420\u0457\u0420\u00B0\u0420\u0491\u0420\u00B0\u0420\u00B5\u0421\u201A \u0420\u0405\u0420\u00B0: " + player.getName());
+        Msg.send(lastSender != null ? lastSender : player, "&a\u041C\u0435\u0442\u0435\u043E\u0440 \u043F\u0430\u0434\u0430\u0435\u0442 \u043D\u0430: " + player.getName());
         running = true;
     }
 
@@ -379,7 +379,7 @@ public class MeteorEvent implements EventManager.EventController {
         removeMeteorModel();
         pendingTargets.clear();
         if (sender != null) {
-            Msg.send(sender, "&e\u0420\u0098\u0420\u0406\u0420\u00B5\u0420\u0405\u0421\u201A \u0421\u0453\u0420\u00B6\u0420\u00B5 \u0420\u00B7\u0420\u00B0\u0420\u0457\u0421\u0453\u0421\u2030\u0420\u00B5\u0420\u0405.");
+            Msg.send(sender, "&e\u0418\u0432\u0435\u043D\u0442 \u0443\u0436\u0435 \u0437\u0430\u043F\u0443\u0449\u0435\u043D.");
         }
         plugin.getEventManager().onEventStopped(getId());
     }

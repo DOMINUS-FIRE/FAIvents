@@ -90,7 +90,7 @@ public class HorrorNightEvent implements EventManager.EventController {
         }
 
         if (world == null) {
-            Msg.send(sender, "&c\u0420\u045A\u0420\u0451\u0421\u0402 \u0420\u0405\u0420\u00B5 \u0420\u0405\u0420\u00B0\u0420\u2116\u0420\u0491\u0420\u00B5\u0420\u0405.");
+            Msg.send(sender, "&c\u041C\u0438\u0440 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.");
             return false;
         }
 
@@ -134,7 +134,7 @@ public class HorrorNightEvent implements EventManager.EventController {
         startBossBar(durationSeconds);
 
         running = true;
-        Msg.send(sender, "&a\u0420\u045C\u0420\u0455\u0421\u2021\u0421\u040A \u0421\u0453\u0420\u00B6\u0420\u00B0\u0421\u0403\u0420\u00B0 \u0420\u0405\u0420\u00B0\u0421\u2021\u0420\u00B0\u0420\u00BB\u0420\u00B0\u0421\u0403\u0421\u040A \u0420\u0405\u0420\u00B0 " + durationMin + " \u0420\u0458\u0420\u0451\u0420\u0405.");
+        Msg.send(sender, "&a\u041D\u043E\u0447\u044C \u0443\u0436\u0430\u0441\u0430 \u043D\u0430\u0447\u0430\u043B\u0430\u0441\u044C \u043D\u0430 " + durationMin + " \u043C\u0438\u043D.");
         return true;
     }
 
@@ -253,7 +253,7 @@ public class HorrorNightEvent implements EventManager.EventController {
         if (bossBar != null) {
             bossBar.removeAll();
         }
-        bossBar = Bukkit.createBossBar(Msg.color("&4\u0420\u045C\u0420\u0455\u0421\u2021\u0421\u040A \u0421\u0453\u0420\u00B6\u0420\u00B0\u0421\u0403\u0420\u00B0: " + formatTime(totalSeconds)), BarColor.RED, BarStyle.SEGMENTED_10);
+        bossBar = Bukkit.createBossBar(Msg.color("&4\u041D\u043E\u0447\u044C \u0443\u0436\u0430\u0441\u0430: " + formatTime(totalSeconds)), BarColor.RED, BarStyle.SEGMENTED_10);
         for (Player p : targets.values()) {
             bossBar.addPlayer(p);
         }
@@ -274,7 +274,7 @@ public class HorrorNightEvent implements EventManager.EventController {
                     return;
                 }
                 bossBar.setProgress(Math.max(0.0, Math.min(1.0, (double) left / (double) totalSeconds)));
-                bossBar.setTitle(Msg.color("&4\u0420\u045C\u0420\u0455\u0421\u2021\u0421\u040A \u0421\u0453\u0420\u00B6\u0420\u00B0\u0421\u0403\u0420\u00B0: " + formatTime(left)));
+                bossBar.setTitle(Msg.color("&4\u041D\u043E\u0447\u044C \u0443\u0436\u0430\u0441\u0430: " + formatTime(left)));
                 left--;
             }
         }.runTaskTimer(plugin, 0L, 20L);
@@ -322,7 +322,7 @@ public class HorrorNightEvent implements EventManager.EventController {
         restoreMobs();
         targets.clear();
         if (sender != null) {
-            Msg.send(sender, "&e\u0420\u045C\u0420\u0455\u0421\u2021\u0421\u040A \u0421\u0453\u0420\u00B6\u0420\u00B0\u0421\u0403\u0420\u00B0 \u0420\u00B7\u0420\u00B0\u0420\u0406\u0420\u00B5\u0421\u0402\u0421\u20AC\u0420\u00B5\u0420\u0405\u0420\u00B0.");
+            Msg.send(sender, "&e\u041D\u043E\u0447\u044C \u0443\u0436\u0430\u0441\u0430 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u0430.");
         }
         plugin.getEventManager().onEventStopped(getId());
     }
@@ -349,7 +349,7 @@ public class HorrorNightEvent implements EventManager.EventController {
 
     @Override
     public void status(CommandSender sender) {
-        Msg.send(sender, running ? "&a\u0420\u045C\u0420\u0455\u0421\u2021\u0421\u040A \u0421\u0453\u0420\u00B6\u0420\u00B0\u0421\u0403\u0420\u00B0 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u00B0." : "&e\u0420\u045C\u0420\u0455\u0421\u2021\u0421\u040A \u0421\u0453\u0420\u00B6\u0420\u00B0\u0421\u0403\u0420\u00B0 \u0420\u0405\u0420\u00B5 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u00B0.");
+        Msg.send(sender, running ? "&a\u041D\u043E\u0447\u044C \u0443\u0436\u0430\u0441\u0430 \u0430\u043A\u0442\u0438\u0432\u043D\u0430." : "&e\u041D\u043E\u0447\u044C \u0443\u0436\u0430\u0441\u0430 \u043D\u0435 \u0430\u043A\u0442\u0438\u0432\u043D\u0430.");
     }
 
     @Override

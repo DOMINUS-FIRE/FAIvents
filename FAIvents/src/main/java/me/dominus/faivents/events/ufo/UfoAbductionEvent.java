@@ -66,7 +66,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
     @Override
     public boolean start(CommandSender sender, String[] args) {
         if (running) {
-            Msg.send(sender, "&e\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0421\u0453\u0420\u00B6\u0420\u00B5 \u0420\u00B7\u0420\u00B0\u0420\u0457\u0421\u0453\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0455.");
+            Msg.send(sender, "&e\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435 \u0443\u0436\u0435 \u0437\u0430\u043F\u0443\u0449\u0435\u043D\u043E.");
             return false;
         }
         pendingTargets.clear();
@@ -80,7 +80,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
             } else {
                 Player p = Bukkit.getPlayerExact(args[2]);
                 if (p == null) {
-                    Msg.send(sender, "&c\u0420\u0098\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454 \u0420\u0405\u0420\u00B5 \u0420\u0405\u0420\u00B0\u0420\u2116\u0420\u0491\u0420\u00B5\u0420\u0405.");
+                    Msg.send(sender, "&c\u0418\u0433\u0440\u043E\u043A \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.");
                     return false;
                 }
                 pendingTargets.add(p.getUniqueId());
@@ -88,7 +88,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
         } else if (sender instanceof Player) {
             pendingTargets.add(((Player) sender).getUniqueId());
         } else {
-            Msg.send(sender, "&c\u0420\u0408\u0420\u0454\u0420\u00B0\u0420\u00B6\u0420\u0451\u0421\u201A\u0420\u00B5 \u0420\u0451\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454\u0420\u00B0 \u0420\u0451\u0420\u00BB\u0420\u0451 \u0420\u0406\u0421\u2039\u0420\u0457\u0420\u0455\u0420\u00BB\u0420\u0405\u0420\u0451\u0421\u201A\u0420\u00B5 \u0420\u0454\u0420\u0455\u0420\u0458\u0420\u00B0\u0420\u0405\u0420\u0491\u0421\u0453 \u0420\u0455\u0421\u201A \u0420\u0451\u0420\u0456\u0421\u0402\u0420\u0455\u0420\u0454\u0420\u00B0.");
+            Msg.send(sender, "&c\u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u0438\u0433\u0440\u043E\u043A\u0430 \u0438\u043B\u0438 \u0432\u044B\u043F\u043E\u043B\u043D\u0438\u0442\u0435 \u043A\u043E\u043C\u0430\u043D\u0434\u0443 \u043E\u0442 \u0438\u0433\u0440\u043E\u043A\u0430.");
             return false;
         }
 
@@ -113,7 +113,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
         World arenaWorld = ConfigUtil.getWorld(cfg, "ufo.arena.world", target.getWorld());
         arenaCenter = ConfigUtil.getLocation(cfg, "ufo.arena", arenaWorld);
         if (arenaWorld == null) {
-            Msg.send(lastSender != null ? lastSender : target, "&c\u0420\u045A\u0420\u0451\u0421\u0402 \u0420\u00B0\u0421\u0402\u0420\u00B5\u0420\u0405\u0421\u2039 \u0420\u0405\u0420\u00B5 \u0420\u0405\u0420\u00B0\u0420\u2116\u0420\u0491\u0420\u00B5\u0420\u0405.");
+            Msg.send(lastSender != null ? lastSender : target, "&c\u041C\u0438\u0440 \u0430\u0440\u0435\u043D\u044B \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D.");
             return;
         }
 
@@ -150,7 +150,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
                     return;
                 }
                 if (p.isDead()) {
-                    Msg.send(p, "&c\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0420\u0457\u0421\u0402\u0420\u0455\u0420\u0406\u0420\u00B0\u0420\u00BB\u0420\u00B5\u0420\u0405\u0420\u0455.");
+                    Msg.send(p, "&c\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435 \u043F\u0440\u043E\u0432\u0430\u043B\u0435\u043D\u043E.");
                     stop(null);
                     return;
                 }
@@ -164,7 +164,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
             }
         }.runTaskTimer(plugin, 20L, 20L);
 
-        Msg.send(lastSender != null ? lastSender : target, "&a\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0420\u0405\u0420\u00B0\u0421\u2021\u0420\u00B0\u0420\u00BB\u0420\u0455\u0421\u0403\u0421\u040A: " + target.getName());
+        Msg.send(lastSender != null ? lastSender : target, "&a\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435 \u043D\u0430\u0447\u0430\u043B\u043E\u0441\u044C: " + target.getName());
     }
 
     private void playAbductionEffects(Player target) {
@@ -189,7 +189,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
         Location loc = target.getLocation();
         target.getWorld().spawnParticle(particle, loc, 60, 0.5, 2.0, 0.5, 0.01);
         target.getWorld().playSound(loc, sound, 1.2f, 1.0f);
-        target.sendTitle(Msg.color("&5\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5"), Msg.color("&d\u0420\u201D\u0420\u00B5\u0421\u0402\u0420\u00B6\u0420\u0451\u0421\u0403\u0421\u040A!"), 10, 40, 10);
+        target.sendTitle(Msg.color("&5\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435"), Msg.color("&d\u0414\u0435\u0440\u0436\u0438\u0441\u044C!"), 10, 40, 10);
     }
 
     private void handleTempKeepInventory(Player target) {
@@ -389,14 +389,14 @@ public class UfoAbductionEvent implements EventManager.EventController {
         for (ItemStack item : loot) {
             p.getInventory().addItem(item);
         }
-        Msg.send(p, "&a\u0420\u045E\u0421\u2039 \u0420\u0406\u0421\u2039\u0420\u00B6\u0420\u0451\u0420\u00BB \u0420\u0451 \u0420\u0457\u0420\u0455\u0420\u00BB\u0421\u0453\u0421\u2021\u0420\u0451\u0420\u00BB \u0420\u0405\u0420\u00B0\u0420\u0456\u0421\u0402\u0420\u00B0\u0420\u0491\u0421\u0453!");
+        Msg.send(p, "&a\u0422\u044B \u0432\u044B\u0436\u0438\u043B \u0438 \u043F\u043E\u043B\u0443\u0447\u0438\u043B \u043D\u0430\u0433\u0440\u0430\u0434\u0443!");
     }
 
     private void startBossBar(Player p, int totalSeconds) {
         if (bossBar != null) {
             bossBar.removeAll();
         }
-        bossBar = Bukkit.createBossBar(Msg.color("&d\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5: " + formatTime(totalSeconds)), BarColor.PURPLE, BarStyle.SEGMENTED_10);
+        bossBar = Bukkit.createBossBar(Msg.color("&d\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435: " + formatTime(totalSeconds)), BarColor.PURPLE, BarStyle.SEGMENTED_10);
         bossBar.addPlayer(p);
         bossBar.setProgress(1.0);
     }
@@ -407,7 +407,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
         }
         double progress = Math.max(0.0, Math.min(1.0, (double) left / (double) total));
         bossBar.setProgress(progress);
-        bossBar.setTitle(Msg.color("&d\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5: " + formatTime(left)));
+        bossBar.setTitle(Msg.color("&d\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435: " + formatTime(left)));
     }
 
     private void stopBossBar() {
@@ -448,7 +448,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
         restoreKeepInventory();
         stopBossBar();
         if (sender != null) {
-            Msg.send(sender, "&e\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0420\u00B7\u0420\u00B0\u0420\u0406\u0420\u00B5\u0421\u0402\u0421\u20AC\u0420\u00B5\u0420\u0405\u0420\u0455.");
+            Msg.send(sender, "&e\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043D\u043E.");
             pendingTargets.clear();
             return;
         }
@@ -458,7 +458,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
 
     @Override
     public void status(CommandSender sender) {
-        Msg.send(sender, running ? "&a\u0420\u0098\u0420\u0491\u0420\u00B5\u0421\u201A \u0420\u0457\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5." : "&e\u0420\u045F\u0420\u0455\u0421\u2026\u0420\u0451\u0421\u2030\u0420\u00B5\u0420\u0405\u0420\u0451\u0420\u00B5 \u0420\u0405\u0420\u00B5 \u0420\u00B0\u0420\u0454\u0421\u201A\u0420\u0451\u0420\u0406\u0420\u0405\u0420\u0455.");
+        Msg.send(sender, running ? "&a\u0418\u0434\u0435\u0442 \u043F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435." : "&e\u041F\u043E\u0445\u0438\u0449\u0435\u043D\u0438\u0435 \u043D\u0435 \u0430\u043A\u0442\u0438\u0432\u043D\u043E.");
     }
 
     @Override

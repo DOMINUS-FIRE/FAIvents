@@ -180,7 +180,7 @@ public class ChitCommand implements CommandExecutor, Listener {
         prevFly.put(player.getUniqueId(), player.getFlySpeed());
         player.setWalkSpeed(0f);
         player.setFlySpeed(0f);
-        player.sendTitle("\u00A7c\u041F\u0420\u041E\u0412\u0415\u0420\u041A\u0410 \u041D\u0410 \u0427\u0418\u0422\u042B!", "\u00A7f\u041D\u0435 \u0434\u0432\u0438\u0433\u0430\u0439\u0441\u044F \u0438 \u043D\u0435 \u043F\u0438\u0448\u0438 \u043A\u043E\u043C\u0430\u043D\u0434\u044B", 10, 80, 10);
+        player.sendTitle("\u00A7c\u00A7l\u041F\u0420\u041E\u0412\u0415\u0420\u041A\u0410 \u041D\u0410 \u0427\u0418\u0422\u042B!", "\u00A7f\u041D\u0435 \u0434\u0432\u0438\u0433\u0430\u0439\u0441\u044F \u0438 \u043D\u0435 \u043F\u0438\u0448\u0438 \u043A\u043E\u043C\u0430\u043D\u0434\u044B", 10, 80, 10);
     }
 
     private void unfreeze(Player player) {

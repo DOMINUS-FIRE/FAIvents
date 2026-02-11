@@ -67,7 +67,6 @@ public class SecretCommand implements CommandExecutor, Listener {
     private static final String TITLE_MOBS_BASE = ChatColor.DARK_AQUA + "\u041C\u043E\u0431\u044B";
 
     private static final int MOBS_PAGE_SIZE = 45;
-    private static final List<MobEntry> MOB_ENTRIES = buildMobEntries();
 
     private final JavaPlugin plugin;
     private final Map<Integer, Action> mainActions = new HashMap<>();
@@ -123,13 +122,6 @@ public class SecretCommand implements CommandExecutor, Listener {
         if (!(sender instanceof Player)) {
             Msg.send(sender, "&c\u041A\u043E\u043C\u0430\u043D\u0434\u0430 \u0442\u043E\u043B\u044C\u043A\u043E \u0434\u043B\u044F \u0438\u0433\u0440\u043E\u043A\u043E\u0432.");
             return true;
-        }
-        if (plugin instanceof me.dominus.faivents.FAIventsPlugin fp && fp.isSecretRequiresOp()) {
-            Player p = (Player) sender;
-            if (!p.isOp()) {
-                Msg.send(p, "&c\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u0430.");
-                return true;
-            }
         }
         Player player = (Player) sender;
         player.openInventory(buildMainMenu());
@@ -190,7 +182,7 @@ public class SecretCommand implements CommandExecutor, Listener {
         inv.setItem(14, item(Material.ENCHANTED_BOOK, "&6\u0424\u0435\u0440\u043C\u0435\u0440"));
         inv.setItem(15, item(Material.ENCHANTED_BOOK, "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431"));
         inv.setItem(16, item(Material.ENCHANTED_BOOK, "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C"));
-        inv.setItem(19, item(Material.ENCHANTED_BOOK, "&6\u0423\u0431\u0438\u0439\u0446\u0430"));
+        inv.setItem(19, item(Material.ENCHANTED_BOOK, "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D"));
         inv.setItem(20, item(Material.ENCHANTED_BOOK, "&6\u0420\u043E\u0433"));
         inv.setItem(21, item(Material.ENCHANTED_BOOK, "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C"));
         inv.setItem(22, item(Material.ENCHANTED_BOOK, "&6\u041F\u043E\u0434\u0440\u044B\u0432"));
@@ -423,6 +415,7 @@ public class SecretCommand implements CommandExecutor, Listener {
         RUS_MOB_NAMES.put("ZOMBIE_VILLAGER", "\u0417\u043E\u043C\u0431\u0438-\u0436\u0438\u0442\u0435\u043B\u044C");
         RUS_MOB_NAMES.put("ZOMBIFIED_PIGLIN", "\u0417\u043E\u043C\u0431\u0438\u0444\u0438\u0446\u0438\u0440\u043E\u0432\u0430\u043D\u043D\u044B\u0439 \u043F\u0438\u0433\u043B\u0438\u043D");
     }
+    private static final List<MobEntry> MOB_ENTRIES = buildMobEntries();
 
     private static int parseMobPage(String title) {
         if (!title.startsWith(TITLE_MOBS_BASE)) {
@@ -532,15 +525,15 @@ public class SecretCommand implements CommandExecutor, Listener {
         switch (action) {
             case CREATIVE:
                 p.setGameMode(GameMode.CREATIVE);
-                Msg.send(p, "&a\u0420\u0435\u0436\u0438\u043C: \u043A\u0440\u0435\u0430\u0442\u0438\u0432.");
+                Msg.send(p, "&a\u0420\u0435\u0436\u0438\u043C: \u041A\u0440\u0435\u0430\u0442\u0438\u0432.");
                 break;
             case SURVIVAL:
                 p.setGameMode(GameMode.SURVIVAL);
-                Msg.send(p, "&a\u0420\u0435\u0436\u0438\u043C: \u0432\u044B\u0436\u0438\u0432\u0430\u043D\u0438\u0435.");
+                Msg.send(p, "&a\u0420\u0435\u0436\u0438\u043C: \u0412\u044B\u0436\u0438\u0432\u0430\u043D\u0438\u0435.");
                 break;
             case SPECTATOR:
                 p.setGameMode(GameMode.SPECTATOR);
-                Msg.send(p, "&a\u0420\u0435\u0436\u0438\u043C: \u043D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C.");
+                Msg.send(p, "&a\u0420\u0435\u0436\u0438\u043C: \u041D\u0430\u0431\u043B\u044E\u0434\u0430\u0442\u0435\u043B\u044C.");
                 break;
             case BACK:
                 p.openInventory(buildMainMenu());
@@ -617,8 +610,8 @@ public class SecretCommand implements CommandExecutor, Listener {
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
             case ASSASSIN:
-                p.getInventory().addItem(book(AssassinEnchant.get(), "&6\u0423\u0431\u0438\u0439\u0446\u0430"));
-                Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0423\u0431\u0438\u0439\u0446\u0430 \u0432\u044B\u0434\u0430\u043D\u0430.");
+                p.getInventory().addItem(book(AssassinEnchant.get(), "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D"));
+                Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0410\u0441\u0441\u0430\u0441\u0438\u043D \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
             case HORN:
                 p.getInventory().addItem(book(HornEnchant.get(), "&6\u0420\u043E\u0433"));
@@ -649,7 +642,7 @@ public class SecretCommand implements CommandExecutor, Listener {
         int slot = e.getRawSlot();
         if (slot == 49) {
             stopFollow(watcher);
-            Msg.send(watcher, "&e\u0421\u043B\u0435\u0436\u043A\u0430 \u043E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u0430.");
+            Msg.send(watcher, "&e\u041D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435 \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E.");
             return;
         }
         if (slot == 53) {
@@ -670,7 +663,7 @@ public class SecretCommand implements CommandExecutor, Listener {
             return;
         }
         startFollow(watcher, target);
-        Msg.send(watcher, "&a\u0421\u043B\u0435\u0436\u043A\u0430 \u0437\u0430: " + target.getName());
+        Msg.send(watcher, "&a\u041D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435 \u0437\u0430: " + target.getName());
     }
 
     private void handleMobsClick(InventoryClickEvent e) {
@@ -901,7 +894,7 @@ public class SecretCommand implements CommandExecutor, Listener {
             Player watcher = Bukkit.getPlayer(watcherId);
             if (watcher != null) {
                 stopFollow(watcher);
-                Msg.send(watcher, "&e\u0421\u043B\u0435\u0436\u043A\u0430 \u043E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u0430.");
+                Msg.send(watcher, "&e\u041D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435 \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E.");
             } else {
                 follow.remove(watcherId);
             }
@@ -961,7 +954,7 @@ public class SecretCommand implements CommandExecutor, Listener {
         Player player = event.getPlayer();
         if (follow.containsKey(player.getUniqueId())) {
             stopFollow(player);
-            Msg.send(player, "&e\u0421\u043B\u0435\u0436\u043A\u0430 \u043E\u0442\u043A\u043B\u044E\u0447\u0435\u043D\u0430.");
+            Msg.send(player, "&e\u041D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435 \u043E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D\u043E.");
         }
     }
 

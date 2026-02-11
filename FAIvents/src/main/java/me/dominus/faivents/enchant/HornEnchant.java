@@ -15,7 +15,7 @@ import java.util.Map;
 
 public final class HornEnchant extends Enchantment {
 
-    private static final String LORE = "\u00A77\u0420\u043E\u0433 \u0433\u0435\u0440\u043E\u044F";
+    private static final String LORE = "\u00a77\u0420\u043e\u0433";
     private static HornEnchant instance;
     private static NamespacedKey key;
 
@@ -57,7 +57,7 @@ public final class HornEnchant extends Enchantment {
 
     @Override
     public String getName() {
-        return "\u0420\u043E\u0433 \u0433\u0435\u0440\u043E\u044F";
+        return "\u0420\u043e\u0433";
     }
 
     @Override
