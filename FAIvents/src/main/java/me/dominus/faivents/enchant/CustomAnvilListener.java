@@ -72,6 +72,9 @@ public class CustomAnvilListener implements Listener {
             if (result.containsEnchantment(BoomLeggingsEnchant.get())) {
                 meta.setUnbreakable(true);
             }
+            if (result.containsEnchantment(UnbreakableEnchant.get())) {
+                meta.setUnbreakable(true);
+            }
             meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
             result.setItemMeta(meta);
         }
@@ -181,7 +184,9 @@ public class CustomAnvilListener implements Listener {
                 || isCustomKey(ench, AssassinEnchant.getKeyStatic())
                 || isCustomKey(ench, HornEnchant.getKeyStatic())
                 || isCustomKey(ench, ShellEnchant.getKeyStatic())
-                || isCustomKey(ench, BoomLeggingsEnchant.getKeyStatic());
+                || isCustomKey(ench, BoomLeggingsEnchant.getKeyStatic())
+                || isCustomKey(ench, UnbreakableEnchant.getKeyStatic())
+                || isCustomKey(ench, PumpkinEnchant.getKeyStatic());
     }
 
     private boolean isCustomKey(Enchantment ench, org.bukkit.NamespacedKey key) {
@@ -213,6 +218,10 @@ public class CustomAnvilListener implements Listener {
             ShellEnchant.addLore(item);
         } else if (isCustomKey(ench, BoomLeggingsEnchant.getKeyStatic())) {
             BoomLeggingsEnchant.addLore(item);
+        } else if (isCustomKey(ench, UnbreakableEnchant.getKeyStatic())) {
+            UnbreakableEnchant.addLore(item);
+        } else if (isCustomKey(ench, PumpkinEnchant.getKeyStatic())) {
+            PumpkinEnchant.addLore(item);
         }
     }
 }

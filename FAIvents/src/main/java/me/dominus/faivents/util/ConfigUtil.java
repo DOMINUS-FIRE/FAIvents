@@ -13,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,8 +121,7 @@ public final class ConfigUtil {
         return new PotionEffect(type, seconds * 20, Math.max(0, level));
     }
 
-        public static List<ItemStack> rollLoot(JavaPlugin plugin, String path) {
-        FileConfiguration cfg = plugin.getConfig();
+    public static List<ItemStack> rollLoot(FileConfiguration cfg, String path) {
         List<ItemStack> out = new ArrayList<>();
         List<Map<?, ?>> list = cfg.getMapList(path);
         if (list == null || list.isEmpty()) {
@@ -171,7 +169,8 @@ public final class ConfigUtil {
                             meta.addEnchant(enchantment, lvl, true);
                         }
                     }
-                }            }
+                }
+            }
             if (meta != null) {
                 item.setItemMeta(meta);
             }
@@ -179,7 +178,8 @@ public final class ConfigUtil {
         }
         return out;
     }
-private static String toString(Object o) {
+
+    private static String toString(Object o) {
         return o == null ? null : String.valueOf(o);
     }
 

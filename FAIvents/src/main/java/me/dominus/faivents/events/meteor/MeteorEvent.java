@@ -64,7 +64,7 @@ public class MeteorEvent implements EventManager.EventController {
 
     @Override
     public boolean isEnabled() {
-        return plugin.getConfig().getBoolean("meteor.enabled", true);
+        return plugin.getEventsConfig().getBoolean("meteor.enabled", true);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class MeteorEvent implements EventManager.EventController {
 
         currentRarity = chooseRarity();
 
-        int max = plugin.getConfig().getInt("meteor.raytrace_max_distance", 120);
+        int max = plugin.getEventsConfig().getInt("meteor.raytrace_max_distance", 120);
         World world = player.getWorld();
         Vector look = player.getEyeLocation().getDirection().normalize();
         RayTraceResult hit = world.rayTraceBlocks(player.getEyeLocation(), look, max);
@@ -127,7 +127,7 @@ public class MeteorEvent implements EventManager.EventController {
         target = new Location(world, hitLoc.getBlockX() + 0.5, hitLoc.getBlockY(), hitLoc.getBlockZ() + 0.5);
 
         Location rod = findNearestLightningRod(target);
-        if (rod != null && plugin.getConfig().getBoolean("meteor.lightning_rod.force_if_found", true)) {
+        if (rod != null && plugin.getEventsConfig().getBoolean("meteor.lightning_rod.force_if_found", true)) {
             target = rod.clone();
         }
 
@@ -137,10 +137,10 @@ public class MeteorEvent implements EventManager.EventController {
     }
 
     private String chooseRarity() {
-        double common = plugin.getConfig().getDouble("meteor.rarity.common", 0.6);
-        double rare = plugin.getConfig().getDouble("meteor.rarity.rare", 0.25);
-        double epic = plugin.getConfig().getDouble("meteor.rarity.epic", 0.12);
-        double legendary = plugin.getConfig().getDouble("meteor.rarity.legendary", 0.03);
+        double common = plugin.getEventsConfig().getDouble("meteor.rarity.common", 0.6);
+        double rare = plugin.getEventsConfig().getDouble("meteor.rarity.rare", 0.25);
+        double epic = plugin.getEventsConfig().getDouble("meteor.rarity.epic", 0.12);
+        double legendary = plugin.getEventsConfig().getDouble("meteor.rarity.legendary", 0.03);
 
         double roll = Math.random();
         double sum = common;
@@ -159,7 +159,7 @@ public class MeteorEvent implements EventManager.EventController {
     }
 
     private Location findNearestLightningRod(Location center) {
-        int radius = plugin.getConfig().getInt("meteor.lightning_rod.search_radius", 25);
+        int radius = plugin.getEventsConfig().getInt("meteor.lightning_rod.search_radius", 25);
         World world = center.getWorld();
         if (world == null) {
             return null;
@@ -187,15 +187,15 @@ public class MeteorEvent implements EventManager.EventController {
     }
 
     private void startFlight(World world, Location target) {
-        int height = plugin.getConfig().getInt("meteor.flight.height", 50);
-        double speed = plugin.getConfig().getDouble("meteor.flight.speed_blocks_per_tick", 1.6);
-        String particleName = plugin.getConfig().getString("meteor.flight.trail_particle", "FLAME");
+        int height = plugin.getEventsConfig().getInt("meteor.flight.height", 50);
+        double speed = plugin.getEventsConfig().getDouble("meteor.flight.speed_blocks_per_tick", 1.6);
+        String particleName = plugin.getEventsConfig().getString("meteor.flight.trail_particle", "FLAME");
         Particle particle = Particle.FLAME;
         try {
             particle = Particle.valueOf(particleName);
         } catch (IllegalArgumentException ignored) {
         }
-        int particleCount = plugin.getConfig().getInt("meteor.flight.trail_particle_count", 14);
+        int particleCount = plugin.getEventsConfig().getInt("meteor.flight.trail_particle_count", 14);
         final Particle trail = particle;
         final int trailCount = Math.max(1, particleCount);
 
@@ -237,7 +237,7 @@ public class MeteorEvent implements EventManager.EventController {
         if (world == null) {
             return;
         }
-        String soundName = plugin.getConfig().getString("meteor.flight.impact_sound", "ENTITY_GENERIC_EXPLODE");
+        String soundName = plugin.getEventsConfig().getString("meteor.flight.impact_sound", "ENTITY_GENERIC_EXPLODE");
         Sound sound = Sound.ENTITY_GENERIC_EXPLODE;
         try {
             sound = Sound.valueOf(soundName);
@@ -261,8 +261,8 @@ public class MeteorEvent implements EventManager.EventController {
     }
 
     private void createCrater(Location center) {
-        int radius = plugin.getConfig().getInt("meteor.crater.radius", 7);
-        int depth = plugin.getConfig().getInt("meteor.crater.depth", 6);
+        int radius = plugin.getEventsConfig().getInt("meteor.crater.radius", 7);
+        int depth = plugin.getEventsConfig().getInt("meteor.crater.depth", 6);
         List<Material> palette = buildPalette();
         World world = center.getWorld();
         if (world == null) {
@@ -295,7 +295,7 @@ public class MeteorEvent implements EventManager.EventController {
 
     private List<Material> buildPalette() {
         List<Material> list = new ArrayList<>();
-        List<Map<?, ?>> palette = plugin.getConfig().getMapList("meteor.crater.core_palette");
+        List<Map<?, ?>> palette = plugin.getEventsConfig().getMapList("meteor.crater.core_palette");
         for (Map<?, ?> raw : palette) {
             String matName = raw.get("material") != null ? raw.get("material").toString() : "MAGMA_BLOCK";
             int weight = 1;
@@ -318,7 +318,7 @@ public class MeteorEvent implements EventManager.EventController {
         if (world == null) {
             return;
         }
-        int maxDepth = plugin.getConfig().getInt("meteor.crater.depth", 6);
+        int maxDepth = plugin.getEventsConfig().getInt("meteor.crater.depth", 6);
         int x = center.getBlockX();
         int z = center.getBlockZ();
         int y = center.getBlockY();
@@ -332,7 +332,7 @@ public class MeteorEvent implements EventManager.EventController {
             safe = place;
         }
         Block block = safe.getBlock();
-        block.setType(ConfigUtil.getMaterial(plugin.getConfig().getString("meteor.loot.chest_material"), Material.CHEST), false);
+        block.setType(ConfigUtil.getMaterial(plugin.getEventsConfig().getString("meteor.loot.chest_material"), Material.CHEST), false);
         Bukkit.getScheduler().runTask(plugin, () -> fillChest(block));
     }
 
@@ -347,9 +347,9 @@ public class MeteorEvent implements EventManager.EventController {
             return;
         }
         Inventory inv = chest.getBlockInventory();
-        List<ItemStack> loot = ConfigUtil.rollLoot(plugin, "meteor.loot.tiers." + currentRarity);
+        List<ItemStack> loot = ConfigUtil.rollLoot(plugin.getEventsConfig(), "meteor.loot.tiers." + currentRarity);
         if (loot.isEmpty()) {
-            loot = ConfigUtil.rollLoot(plugin, "meteor.loot.loot");
+            loot = ConfigUtil.rollLoot(plugin.getEventsConfig(), "meteor.loot.loot");
         }
         if (loot.isEmpty()) {
             loot.add(new ItemStack(Material.IRON_INGOT, 6));
@@ -400,7 +400,7 @@ public class MeteorEvent implements EventManager.EventController {
 
     private void spawnMeteorModel(World world, Location center) {
         removeMeteorModel();
-        int radius = plugin.getConfig().getInt("meteor.model.radius", 2);
+        int radius = plugin.getEventsConfig().getInt("meteor.model.radius", 2);
         List<Material> palette = buildMeteorPalette();
         if (palette.isEmpty()) {
             palette.add(Material.MAGMA_BLOCK);
@@ -443,7 +443,7 @@ public class MeteorEvent implements EventManager.EventController {
 
     private List<Material> buildMeteorPalette() {
         List<Material> list = new ArrayList<>();
-        List<Map<?, ?>> palette = plugin.getConfig().getMapList("meteor.model.palette");
+        List<Map<?, ?>> palette = plugin.getEventsConfig().getMapList("meteor.model.palette");
         for (Map<?, ?> raw : palette) {
             String matName = raw.get("material") != null ? raw.get("material").toString() : "MAGMA_BLOCK";
             int weight = 1;
@@ -461,6 +461,9 @@ public class MeteorEvent implements EventManager.EventController {
         return list;
     }
 }
+
+
+
 
 
 

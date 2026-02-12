@@ -60,7 +60,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
 
     @Override
     public boolean isEnabled() {
-        return plugin.getConfig().getBoolean("artifact_hunt.enabled", true);
+        return plugin.getEventsConfig().getBoolean("artifact_hunt.enabled", true);
     }
 
     @Override
@@ -93,14 +93,14 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
 
         center = new Location(world, sumX / count, world.getSpawnLocation().getY(), sumZ / count);
 
-        int min = plugin.getConfig().getInt("artifact_hunt.radius_min", 40);
-        int max = plugin.getConfig().getInt("artifact_hunt.radius_max", 140);
+        int min = plugin.getEventsConfig().getInt("artifact_hunt.radius_min", 40);
+        int max = plugin.getEventsConfig().getInt("artifact_hunt.radius_max", 140);
         int radius = RandUtil.nextInt(min, max);
         double angle = Math.toRadians(RandUtil.nextInt(0, 360));
         int x = (int) (center.getX() + Math.cos(angle) * radius);
         int z = (int) (center.getZ() + Math.sin(angle) * radius);
 
-        artifactBlock = ConfigUtil.getMaterial(plugin.getConfig().getString("artifact_hunt.artifact_block"), Material.BEACON);
+        artifactBlock = ConfigUtil.getMaterial(plugin.getEventsConfig().getString("artifact_hunt.artifact_block"), Material.BEACON);
         artifactLoc = SafeWorldEdit.getHighestSafe(world, x, z);
         if (artifactLoc == null) {
             Msg.send(sender, "&c\u041D\u0435 \u0443\u0434\u0430\u043B\u043E\u0441\u044C \u043D\u0430\u0439\u0442\u0438 \u043C\u0435\u0441\u0442\u043E \u0434\u043B\u044F \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430.");
@@ -113,11 +113,11 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         placeArtifact(artifactLoc);
         giveCompasses();
 
-        if (plugin.getConfig().getBoolean("artifact_hunt.announce_pvp_rule_only", true)) {
+        if (plugin.getEventsConfig().getBoolean("artifact_hunt.announce_pvp_rule_only", true)) {
             Msg.send(sender, "&ePvP \u043D\u0430 \u0432\u0440\u0435\u043C\u044F \u0438\u0432\u0435\u043D\u0442\u0430 \u043D\u0435 \u043C\u0435\u043D\u044F\u0435\u0442\u0441\u044F. \u042D\u0442\u043E \u0442\u043E\u043B\u044C\u043A\u043E \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u044F.");
         }
 
-        int durationMin = plugin.getConfig().getInt("artifact_hunt.duration_minutes", 15);
+        int durationMin = plugin.getEventsConfig().getInt("artifact_hunt.duration_minutes", 15);
         startBossBar(durationMin * 60);
 
         task = new BukkitRunnable() {
@@ -140,12 +140,12 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
     }
 
     private void buildArtifactStructure(Location loc) {
-        int radius = plugin.getConfig().getInt("artifact_hunt.structure.radius", 3);
-        int height = plugin.getConfig().getInt("artifact_hunt.structure.height", 4);
-        Material floor = ConfigUtil.getMaterial(plugin.getConfig().getString("artifact_hunt.structure.floor_material"), Material.POLISHED_BLACKSTONE_BRICKS);
-        Material pillar = ConfigUtil.getMaterial(plugin.getConfig().getString("artifact_hunt.structure.pillar_material"), Material.DEEPSLATE_BRICKS);
-        Material accent = ConfigUtil.getMaterial(plugin.getConfig().getString("artifact_hunt.structure.accent_material"), Material.AMETHYST_BLOCK);
-        Material light = ConfigUtil.getMaterial(plugin.getConfig().getString("artifact_hunt.structure.light_material"), Material.SOUL_LANTERN);
+        int radius = plugin.getEventsConfig().getInt("artifact_hunt.structure.radius", 3);
+        int height = plugin.getEventsConfig().getInt("artifact_hunt.structure.height", 4);
+        Material floor = ConfigUtil.getMaterial(plugin.getEventsConfig().getString("artifact_hunt.structure.floor_material"), Material.POLISHED_BLACKSTONE_BRICKS);
+        Material pillar = ConfigUtil.getMaterial(plugin.getEventsConfig().getString("artifact_hunt.structure.pillar_material"), Material.DEEPSLATE_BRICKS);
+        Material accent = ConfigUtil.getMaterial(plugin.getEventsConfig().getString("artifact_hunt.structure.accent_material"), Material.AMETHYST_BLOCK);
+        Material light = ConfigUtil.getMaterial(plugin.getEventsConfig().getString("artifact_hunt.structure.light_material"), Material.SOUL_LANTERN);
 
         Location base = loc.clone().add(0, -1, 0);
         for (int dx = -radius; dx <= radius; dx++) {
@@ -172,8 +172,8 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
     }
 
     private void clearInside(Location loc) {
-        int radius = plugin.getConfig().getInt("artifact_hunt.structure.radius", 3);
-        int height = plugin.getConfig().getInt("artifact_hunt.structure.height", 4);
+        int radius = plugin.getEventsConfig().getInt("artifact_hunt.structure.radius", 3);
+        int height = plugin.getEventsConfig().getInt("artifact_hunt.structure.height", 4);
         Location base = loc.clone().add(0, -1, 0);
         for (int dx = -(radius - 1); dx <= (radius - 1); dx++) {
             for (int dz = -(radius - 1); dz <= (radius - 1); dz++) {
@@ -198,8 +198,8 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
     }
 
     private void giveCompasses() {
-        String name = plugin.getConfig().getString("artifact_hunt.compass.name", "&e\u041A\u043E\u043C\u043F\u0430\u0441 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430");
-        boolean offhand = plugin.getConfig().getBoolean("artifact_hunt.compass.offhand", true);
+        String name = plugin.getEventsConfig().getString("artifact_hunt.compass.name", "&e\u041A\u043E\u043C\u043F\u0430\u0441 \u0430\u0440\u0442\u0435\u0444\u0430\u043A\u0442\u0430");
+        boolean offhand = plugin.getEventsConfig().getBoolean("artifact_hunt.compass.offhand", true);
         for (Player p : Bukkit.getOnlinePlayers()) {
             ItemStack compass = new ItemStack(Material.COMPASS, 1);
             CompassMeta meta = (CompassMeta) compass.getItemMeta();
@@ -279,7 +279,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
     }
 
     private void spawnParticles() {
-        String pName = plugin.getConfig().getString("artifact_hunt.particle", "END_ROD");
+        String pName = plugin.getEventsConfig().getString("artifact_hunt.particle", "END_ROD");
         Particle particle = Particle.END_ROD;
         try {
             particle = Particle.valueOf(pName);
@@ -320,7 +320,7 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
             return;
         }
         rewarded = true;
-        List<ItemStack> loot = ConfigUtil.rollLoot(plugin, "artifact_hunt.loot");
+        List<ItemStack> loot = ConfigUtil.rollLoot(plugin.getEventsConfig(), "artifact_hunt.loot");
         if (loot.isEmpty()) {
             loot.add(new ItemStack(Material.GOLD_INGOT, 4));
         }
@@ -419,3 +419,4 @@ public class ArtifactHuntEvent implements EventManager.EventController, Listener
         return running;
     }
 }
+

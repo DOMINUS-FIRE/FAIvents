@@ -2,7 +2,6 @@ package me.dominus.faivents.quarry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +31,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public final class QuarryManager {
 
-    private static final int[] BLOCKS_PER_TICK = new int[] { 1, 2, 4, 6, 8 };
-    private static final long TASK_INTERVAL = 2L;
+    private static final int[] BLOCKS_PER_TICK = new int[] { 1, 1, 2, 3, 4 };
+    private static final long TASK_INTERVAL = 4L;
 
     public enum FilterMode {
         KEEP,
@@ -49,6 +48,7 @@ public final class QuarryManager {
     private final NamespacedKey silkKey;
     private final NamespacedKey filterModeKey;
     private final NamespacedKey multiChunkKey;
+    private final NamespacedKey solarKey;
 
     private final Map<LocationKey, QuarryTask> tasks = new HashMap<>();
     private final Map<LocationKey, QuarryData> data = new HashMap<>();
@@ -64,6 +64,7 @@ public final class QuarryManager {
         this.silkKey = new NamespacedKey(plugin, "quarry_silk");
         this.filterModeKey = new NamespacedKey(plugin, "quarry_filter_mode");
         this.multiChunkKey = new NamespacedKey(plugin, "quarry_multi_chunk");
+        this.solarKey = new NamespacedKey(plugin, "quarry_solar");
     }
 
     public ItemStack createQuarryItem(int level) {
@@ -140,6 +141,7 @@ public final class QuarryManager {
             pdc.set(silkKey, PersistentDataType.BYTE, (byte) 0);
             pdc.set(filterModeKey, PersistentDataType.STRING, FilterMode.KEEP.name());
             pdc.set(multiChunkKey, PersistentDataType.BYTE, (byte) 0);
+            pdc.set(solarKey, PersistentDataType.BYTE, (byte) 1);
             tile.update(true, false);
         }
         QuarryData qd = new QuarryData(owner.getUniqueId(), level);
@@ -163,12 +165,14 @@ public final class QuarryManager {
             pdc.remove(silkKey);
             pdc.remove(filterModeKey);
             pdc.remove(multiChunkKey);
+            pdc.remove(solarKey);
             tile.update(true, false);
         }
         LocationKey key = LocationKey.from(block.getLocation());
         data.remove(key);
         stopQuarry(block);
         removeHologram(block);
+        removeNearbyHolograms(block);
     }
 
     public UUID getOwner(Block block) {
@@ -264,6 +268,23 @@ public final class QuarryManager {
         BlockState state = block.getState();
         if (state instanceof TileState tile) {
             tile.getPersistentDataContainer().set(multiChunkKey, PersistentDataType.BYTE, (byte) (value ? 1 : 0));
+            tile.update(true, false);
+        }
+    }
+
+    public boolean isSolarEnabled(Block block) {
+        BlockState state = block.getState();
+        if (state instanceof TileState tile) {
+            Byte b = tile.getPersistentDataContainer().get(solarKey, PersistentDataType.BYTE);
+            return b == null || b == 1;
+        }
+        return true;
+    }
+
+    public void setSolarEnabled(Block block, boolean value) {
+        BlockState state = block.getState();
+        if (state instanceof TileState tile) {
+            tile.getPersistentDataContainer().set(solarKey, PersistentDataType.BYTE, (byte) (value ? 1 : 0));
             tile.update(true, false);
         }
     }
@@ -384,6 +405,28 @@ public final class QuarryManager {
         }
     }
 
+    public int cleanupOrphanedHolograms() {
+        int removed = 0;
+        for (World w : Bukkit.getWorlds()) {
+            for (TextDisplay td : w.getEntitiesByClass(TextDisplay.class)) {
+                if (!isQuarryHologram(td)) {
+                    continue;
+                }
+                Location loc = td.getLocation();
+                Block base = loc.clone().subtract(0.5, 1.6, 0.5).getBlock();
+                if (!isQuarryBlock(base)) {
+                    td.remove();
+                    removed++;
+                    continue;
+                }
+                td.remove();
+                removed++;
+                updateHologram(base);
+            }
+        }
+        return removed;
+    }
+
     private void removeHologram(Block block) {
         if (block == null) {
             return;
@@ -392,6 +435,20 @@ public final class QuarryManager {
         Entity e = holograms.remove(key);
         if (e != null && !e.isDead()) {
             e.remove();
+        }
+    }
+
+    private void removeNearbyHolograms(Block block) {
+        if (block == null) {
+            return;
+        }
+        for (TextDisplay td : block.getWorld().getEntitiesByClass(TextDisplay.class)) {
+            if (!isQuarryHologram(td)) {
+                continue;
+            }
+            if (td.getLocation().distanceSquared(block.getLocation()) <= 9.0) {
+                td.remove();
+            }
         }
     }
 
@@ -414,7 +471,7 @@ public final class QuarryManager {
             this.world = block.getWorld();
             this.chunkX = block.getChunk().getX();
             this.chunkZ = block.getChunk().getZ();
-            this.queue = buildQueue(block.getChunk(), origin);
+            this.queue = buildQueue(block.getChunk());
         }
 
         @Override
@@ -439,7 +496,7 @@ public final class QuarryManager {
             }
 
             int level = qd.level;
-            if (level >= 3) {
+            if (level >= 3 && isSolarEnabled(quarryBlock)) {
                 solarTick++;
                 if (solarTick >= 20) {
                     solarTick = 0;
@@ -450,6 +507,9 @@ public final class QuarryManager {
             }
 
             if (getFuel(quarryBlock) <= 0) {
+                if (!isSolarEnabled(quarryBlock)) {
+                    setRunning(quarryBlock, false);
+                }
                 return;
             }
 
@@ -472,7 +532,7 @@ public final class QuarryManager {
             if (queueIndex >= queue.size()) {
                 if (level >= 5 && isMultiChunk(quarryBlock)) {
                     moveToNextChunk();
-                    queue = buildQueue(world.getChunkAt(chunkX, chunkZ), origin);
+                    queue = buildQueue(world.getChunkAt(chunkX, chunkZ));
                     queueIndex = 0;
                 } else {
                     stopQuarry(quarryBlock);
@@ -500,7 +560,7 @@ public final class QuarryManager {
             spiralProgress++;
         }
 
-        private List<BlockPos> buildQueue(Chunk chunk, Location center) {
+        private List<BlockPos> buildQueue(Chunk chunk) {
             int minY = world.getMinHeight();
             int maxY = world.getMaxHeight() - 1;
             int startX = chunk.getX() << 4;
@@ -513,9 +573,22 @@ public final class QuarryManager {
                     }
                 }
             }
-            Collections.sort(list, Comparator.comparingDouble(p -> p.distanceSq(center)));
             return list;
         }
+    }
+
+    private boolean isQuarryHologram(TextDisplay td) {
+        if (td == null) {
+            return false;
+        }
+        String text = td.getText();
+        if (text == null) {
+            return false;
+        }
+        if (!text.contains("\u0412\u043B\u0430\u0434\u0435\u043B\u0435\u0446:")) {
+            return false;
+        }
+        return text.contains("\u0420\u0430\u0431\u043E\u0442\u0430\u0435\u0442") || text.contains("\u041E\u0441\u0442\u0430\u043D\u043E\u0432\u043B\u0435\u043D");
     }
 
     private boolean consumeFuel(Block block, int amount) {
@@ -722,12 +795,6 @@ public final class QuarryManager {
             this.z = z;
         }
 
-        double distanceSq(Location loc) {
-            double dx = x + 0.5 - loc.getX();
-            double dy = y + 0.5 - loc.getY();
-            double dz = z + 0.5 - loc.getZ();
-            return dx * dx + dy * dy + dz * dz;
-        }
     }
 
     private static final class LocationKey {

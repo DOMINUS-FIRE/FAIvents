@@ -1,0 +1,71 @@
+# Shop configuration
+
+shop:
+  prices:
+    enchants:
+      drill:
+        DIAMOND: 16
+      magnet:
+        DIAMOND: 12
+      autosmelt:
+        DIAMOND: 12
+      farmer:
+        DIAMOND: 12
+      lumberjack:
+        DIAMOND: 8
+      second_life:
+        DIAMOND: 32
+      assassin:
+        DIAMOND: 28
+      horn:
+        DIAMOND: 24
+      shell:
+        DIAMOND: 24
+      boom:
+        DIAMOND: 24
+    quarry:
+      1:
+        EMERALD_BLOCK: 1
+        DIAMOND_BLOCK: 1
+        GOLD_BLOCK: 1
+        IRON_INGOT: 2
+        DIAMOND_PICKAXE: 1
+        IRON_BLOCK: 2
+        DISPENSER: 1
+      2:
+        EMERALD_BLOCK: 2
+        DIAMOND_BLOCK: 2
+        GOLD_BLOCK: 2
+        IRON_INGOT: 8
+        DIAMOND_PICKAXE: 1
+        IRON_BLOCK: 4
+        DISPENSER: 1
+      3:
+        EMERALD_BLOCK: 3
+        DIAMOND_BLOCK: 3
+        GOLD_BLOCK: 3
+        IRON_INGOT: 16
+        DIAMOND_PICKAXE: 1
+        IRON_BLOCK: 8
+        DISPENSER: 1
+        WITHER_SKELETON_SKULL: 1
+      4:
+        EMERALD_BLOCK: 4
+        DIAMOND_BLOCK: 4
+        GOLD_BLOCK: 4
+        IRON_INGOT: 24
+        DIAMOND_PICKAXE: 1
+        IRON_BLOCK: 12
+        DISPENSER: 1
+        WITHER_SKELETON_SKULL: 1
+        DIAMOND_HELMET: 1
+      5:
+        EMERALD_BLOCK: 6
+        DIAMOND_BLOCK: 6
+        GOLD_BLOCK: 6
+        IRON_INGOT: 32
+        DIAMOND_PICKAXE: 1
+        IRON_BLOCK: 16
+        DISPENSER: 1
+        WITHER_SKELETON_SKULL: 2
+        ANCIENT_DEBRIS: 2

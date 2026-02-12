@@ -12,6 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class FarmerListener implements Listener {
 
@@ -33,23 +35,29 @@ public class FarmerListener implements Listener {
         }
         Block base = player.getLocation().getBlock();
         int y = base.getY();
+        boolean applied = false;
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
                 Block b = base.getWorld().getBlockAt(base.getX() + dx, y, base.getZ() + dz);
-                applyBonemeal(b);
+                applied |= applyBonemeal(b);
                 Block up = b.getRelative(0, 1, 0);
-                applyBonemeal(up);
+                applied |= applyBonemeal(up);
             }
+        }
+        if (applied) {
+            damageHoe(player, tool, 2);
         }
     }
 
-    private void applyBonemeal(Block block) {
+    private boolean applyBonemeal(Block block) {
         if (block.getBlockData() instanceof Ageable age) {
             if (age.getAge() < age.getMaximumAge()) {
                 age.setAge(age.getMaximumAge());
                 block.setBlockData(age, false);
+                return true;
             }
         }
+        return false;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -116,5 +124,28 @@ public class FarmerListener implements Listener {
             }
         }
         return false;
+    }
+
+    private void damageHoe(Player player, ItemStack tool, int amount) {
+        if (tool == null || amount <= 0) {
+            return;
+        }
+        ItemMeta meta = tool.getItemMeta();
+        if (!(meta instanceof Damageable damageable)) {
+            return;
+        }
+        int max = tool.getType().getMaxDurability();
+        if (max <= 0) {
+            return;
+        }
+        int newDamage = damageable.getDamage() + amount;
+        if (newDamage >= max) {
+            tool.setAmount(0);
+            player.getInventory().setItemInMainHand(null);
+            return;
+        }
+        damageable.setDamage(newDamage);
+        tool.setItemMeta(meta);
+        player.getInventory().setItemInMainHand(tool);
     }
 }

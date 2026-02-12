@@ -63,7 +63,7 @@ public class EventManager {
             Msg.send(sender, "&e\u042D\u0442\u043E\u0442 \u0438\u0432\u0435\u043D\u0442 \u043E\u0442\u043A\u043B\u044E\u0447\u0435\u043D \u0432 \u043A\u043E\u043D\u0444\u0438\u0433\u0435.");
             return;
         }
-        boolean allowParallel = plugin.getConfig().getBoolean("allow_parallel_events", false);
+        boolean allowParallel = plugin.getEventsConfig().getBoolean("allow_parallel_events", false);
         if (!allowParallel && !running.isEmpty() && !running.contains(id)) {
             Msg.send(sender, "&c\u0421\u0435\u0439\u0447\u0430\u0441 \u0443\u0436\u0435 \u0437\u0430\u043F\u0443\u0449\u0435\u043D \u0434\u0440\u0443\u0433\u043E\u0439 \u0438\u0432\u0435\u043D\u0442. \u041E\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u0435 \u0435\u0433\u043E \u0438\u043B\u0438 \u0432\u043A\u043B\u044E\u0447\u0438\u0442\u0435 \u043F\u0430\u0440\u0430\u043B\u043B\u0435\u043B\u044C\u043D\u043E\u0441\u0442\u044C \u0432 \u043A\u043E\u043D\u0444\u0438\u0433\u0435.");
             return;

@@ -52,12 +52,12 @@ public class RealityGlitchEvent implements EventManager.EventController {
 
     @Override
     public boolean isEnabled() {
-        return plugin.getConfig().getBoolean("reality_glitch.enabled", true);
+        return plugin.getEventsConfig().getBoolean("reality_glitch.enabled", true);
     }
 
     @Override
     public boolean start(CommandSender sender, String[] args) {
-        int durationMin = plugin.getConfig().getInt("reality_glitch.duration_minutes", 10);
+        int durationMin = plugin.getEventsConfig().getInt("reality_glitch.duration_minutes", 10);
         int durationTicks = durationMin * 60 * 20;
         int durationSeconds = durationMin * 60;
         stored.clear();
@@ -101,16 +101,16 @@ public class RealityGlitchEvent implements EventManager.EventController {
     }
 
     private void applyConfiguredEffects(Player p, int durationTicks) {
-        List<String> list = plugin.getConfig().getStringList("reality_glitch.effects");
+        List<String> list = plugin.getEventsConfig().getStringList("reality_glitch.effects");
         for (String spec : list) {
             PotionEffect eff = ConfigUtil.parseEffect(spec, durationTicks / 20);
             if (eff != null) {
                 p.addPotionEffect(new PotionEffect(eff.getType(), durationTicks, eff.getAmplifier()));
             }
         }
-        double chance = plugin.getConfig().getDouble("reality_glitch.random_effect_chance", 0.15);
+        double chance = plugin.getEventsConfig().getDouble("reality_glitch.random_effect_chance", 0.15);
         if (RandUtil.chance(chance)) {
-            List<String> random = plugin.getConfig().getStringList("reality_glitch.random_effects");
+            List<String> random = plugin.getEventsConfig().getStringList("reality_glitch.random_effects");
             String picked = RandUtil.pick(random);
             PotionEffect eff = ConfigUtil.parseEffect(picked, durationTicks / 20);
             if (eff != null) {
@@ -120,28 +120,28 @@ public class RealityGlitchEvent implements EventManager.EventController {
     }
 
     private void startVisuals(List<Player> targets) {
-        boolean enabled = plugin.getConfig().getBoolean("reality_glitch.visuals.enabled", true);
+        boolean enabled = plugin.getEventsConfig().getBoolean("reality_glitch.visuals.enabled", true);
         if (!enabled) {
             return;
         }
-        String pName = plugin.getConfig().getString("reality_glitch.visuals.particle", "PORTAL");
+        String pName = plugin.getEventsConfig().getString("reality_glitch.visuals.particle", "PORTAL");
         Particle particle = Particle.PORTAL;
         try {
             particle = Particle.valueOf(pName);
         } catch (IllegalArgumentException ignored) {
         }
-        int count = plugin.getConfig().getInt("reality_glitch.visuals.particle_count", 30);
-        double launchChance = plugin.getConfig().getDouble("reality_glitch.visuals.launch_chance", 0.2);
-        double launchPower = plugin.getConfig().getDouble("reality_glitch.visuals.launch_power", 0.6);
-        double flickerChance = plugin.getConfig().getDouble("reality_glitch.visuals.flicker_chance", 0.25);
-        int flickerTicks = plugin.getConfig().getInt("reality_glitch.visuals.flicker_ticks", 10);
-        String soundName = plugin.getConfig().getString("reality_glitch.visuals.sound", "ENTITY_ENDERMAN_SCREAM");
+        int count = plugin.getEventsConfig().getInt("reality_glitch.visuals.particle_count", 30);
+        double launchChance = plugin.getEventsConfig().getDouble("reality_glitch.visuals.launch_chance", 0.2);
+        double launchPower = plugin.getEventsConfig().getDouble("reality_glitch.visuals.launch_power", 0.6);
+        double flickerChance = plugin.getEventsConfig().getDouble("reality_glitch.visuals.flicker_chance", 0.25);
+        int flickerTicks = plugin.getEventsConfig().getInt("reality_glitch.visuals.flicker_ticks", 10);
+        String soundName = plugin.getEventsConfig().getString("reality_glitch.visuals.sound", "ENTITY_ENDERMAN_SCREAM");
         Sound sound = Sound.ENTITY_ENDERMAN_SCREAM;
         try {
             sound = Sound.valueOf(soundName);
         } catch (IllegalArgumentException ignored) {
         }
-        int interval = plugin.getConfig().getInt("reality_glitch.visuals.interval_ticks", 30);
+        int interval = plugin.getEventsConfig().getInt("reality_glitch.visuals.interval_ticks", 30);
         final Particle particleFinal = particle;
         final int countFinal = count;
         final double launchChanceFinal = launchChance;
@@ -173,14 +173,14 @@ public class RealityGlitchEvent implements EventManager.EventController {
     }
 
     private void spawnFragments(Player p) {
-        boolean enabled = plugin.getConfig().getBoolean("reality_glitch.visuals.fragments.enabled", true);
+        boolean enabled = plugin.getEventsConfig().getBoolean("reality_glitch.visuals.fragments.enabled", true);
         if (!enabled) {
             return;
         }
-        int count = plugin.getConfig().getInt("reality_glitch.visuals.fragments.count", 4);
-        int radius = plugin.getConfig().getInt("reality_glitch.visuals.fragments.radius", 6);
-        int duration = plugin.getConfig().getInt("reality_glitch.visuals.fragments.duration_ticks", 40);
-        List<String> mats = plugin.getConfig().getStringList("reality_glitch.visuals.fragments.materials");
+        int count = plugin.getEventsConfig().getInt("reality_glitch.visuals.fragments.count", 4);
+        int radius = plugin.getEventsConfig().getInt("reality_glitch.visuals.fragments.radius", 6);
+        int duration = plugin.getEventsConfig().getInt("reality_glitch.visuals.fragments.duration_ticks", 40);
+        List<String> mats = plugin.getEventsConfig().getStringList("reality_glitch.visuals.fragments.materials");
         List<Material> palette = new ArrayList<>();
         for (String m : mats) {
             Material mat = ConfigUtil.getMaterial(m, null);

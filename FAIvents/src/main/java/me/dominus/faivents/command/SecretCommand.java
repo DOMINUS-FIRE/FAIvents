@@ -45,6 +45,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import me.dominus.faivents.FAIventsPlugin;
 import me.dominus.faivents.enchant.AssassinEnchant;
 import me.dominus.faivents.enchant.AutoSmeltEnchant;
 import me.dominus.faivents.enchant.BoomLeggingsEnchant;
@@ -53,8 +54,11 @@ import me.dominus.faivents.enchant.FarmerEnchant;
 import me.dominus.faivents.enchant.HornEnchant;
 import me.dominus.faivents.enchant.LumberjackEnchant;
 import me.dominus.faivents.enchant.MagnetEnchant;
+import me.dominus.faivents.enchant.PumpkinEnchant;
 import me.dominus.faivents.enchant.SecondLifeEnchant;
 import me.dominus.faivents.enchant.ShellEnchant;
+import me.dominus.faivents.enchant.UnbreakableEnchant;
+import me.dominus.faivents.quarry.QuarryManager;
 import me.dominus.faivents.util.Msg;
 
 public class SecretCommand implements CommandExecutor, Listener {
@@ -62,29 +66,31 @@ public class SecretCommand implements CommandExecutor, Listener {
     private static final String TITLE_MAIN = ChatColor.DARK_GRAY + "\u0421\u0435\u043A\u0440\u0435\u0442\u043D\u043E\u0435 \u043C\u0435\u043D\u044E";
     private static final String TITLE_MODES = ChatColor.DARK_AQUA + "\u0420\u0435\u0436\u0438\u043C\u044B";
     private static final String TITLE_COMMANDS = ChatColor.DARK_AQUA + "\u041A\u043E\u043C\u0430\u043D\u0434\u044B";
-    private static final String TITLE_ENCHANTS = ChatColor.DARK_AQUA + "\u0417\u0430\u0447\u0430\u0440\u043E\u0432\u0430\u043D\u0438\u044F";
+    private static final String TITLE_ITEMS = ChatColor.DARK_AQUA + "\u041F\u0440\u0435\u0434\u043C\u0435\u0442\u044B";
     private static final String TITLE_TRACK = ChatColor.DARK_AQUA + "\u041D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435";
     private static final String TITLE_MOBS_BASE = ChatColor.DARK_AQUA + "\u041C\u043E\u0431\u044B";
 
     private static final int MOBS_PAGE_SIZE = 45;
 
     private final JavaPlugin plugin;
+    private final FAIventsPlugin faPlugin;
     private final Map<Integer, Action> mainActions = new HashMap<>();
     private final Map<Integer, ModeAction> modeActions = new HashMap<>();
     private final Map<Integer, CommandAction> commandActions = new HashMap<>();
-    private final Map<Integer, EnchantAction> enchantActions = new HashMap<>();
+    private final Map<Integer, ItemAction> itemActions = new HashMap<>();
 
     private final Map<UUID, FollowState> follow = new HashMap<>();
     private final Map<UUID, DisguiseState> disguises = new HashMap<>();
 
     public SecretCommand(JavaPlugin plugin) {
         this.plugin = plugin;
+        this.faPlugin = plugin instanceof FAIventsPlugin fp ? fp : null;
     }
 
     private enum Action {
         OPEN_MODES,
         OPEN_COMMANDS,
-        OPEN_ENCHANTS,
+        OPEN_ITEMS,
         OPEN_TRACK,
         OPEN_MOBS
     }
@@ -103,17 +109,24 @@ public class SecretCommand implements CommandExecutor, Listener {
         BACK
     }
 
-    private enum EnchantAction {
-        DRILL,
-        MAGNET,
-        SMELT,
-        FARMER,
-        LUMBERJACK,
-        SECOND_LIFE,
-        ASSASSIN,
-        HORN,
-        SHELL,
-        BOOM_LEGS,
+    private enum ItemAction {
+        BOOK_DRILL,
+        BOOK_MAGNET,
+        BOOK_SMELT,
+        BOOK_FARMER,
+        BOOK_LUMBERJACK,
+        BOOK_SECOND_LIFE,
+        BOOK_ASSASSIN,
+        BOOK_HORN,
+        BOOK_SHELL,
+        BOOK_BOOM,
+        BOOK_UNBREAKABLE,
+        BOOK_PUMPKIN,
+        QUARRY_1,
+        QUARRY_2,
+        QUARRY_3,
+        QUARRY_4,
+        QUARRY_5,
         BACK
     }
 
@@ -139,14 +152,14 @@ public class SecretCommand implements CommandExecutor, Listener {
         Inventory inv = Bukkit.createInventory(null, 27, TITLE_MAIN);
         inv.setItem(10, item(Material.DIAMOND_SWORD, "&b\u0420\u0435\u0436\u0438\u043C\u044B"));
         inv.setItem(12, item(Material.COMMAND_BLOCK, "&e\u041A\u043E\u043C\u0430\u043D\u0434\u044B"));
-        inv.setItem(14, item(Material.ENCHANTED_BOOK, "&6\u0417\u0430\u0447\u0430\u0440\u043E\u0432\u0430\u043D\u0438\u044F"));
+        inv.setItem(14, item(Material.CHEST, "&6\u041F\u0440\u0435\u0434\u043C\u0435\u0442\u044B"));
         inv.setItem(16, item(Material.ENDER_EYE, "&d\u041D\u0430\u0431\u043B\u044E\u0434\u0435\u043D\u0438\u0435"));
         inv.setItem(22, item(Material.ZOMBIE_HEAD, "&5\u041C\u043E\u0431\u044B"));
 
         mainActions.clear();
         mainActions.put(10, Action.OPEN_MODES);
         mainActions.put(12, Action.OPEN_COMMANDS);
-        mainActions.put(14, Action.OPEN_ENCHANTS);
+        mainActions.put(14, Action.OPEN_ITEMS);
         mainActions.put(16, Action.OPEN_TRACK);
         mainActions.put(22, Action.OPEN_MOBS);
         return inv;
@@ -181,32 +194,47 @@ public class SecretCommand implements CommandExecutor, Listener {
         return inv;
     }
 
-    private Inventory buildEnchantMenu() {
-        Inventory inv = Bukkit.createInventory(null, 27, TITLE_ENCHANTS);
+    private Inventory buildItemsMenu() {
+        Inventory inv = Bukkit.createInventory(null, 54, TITLE_ITEMS);
         inv.setItem(10, item(Material.ENCHANTED_BOOK, "&6\u0411\u0443\u0440"));
         inv.setItem(11, item(Material.ENCHANTED_BOOK, "&6\u041C\u0430\u0433\u043D\u0438\u0442"));
         inv.setItem(12, item(Material.ENCHANTED_BOOK, "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430"));
-        inv.setItem(14, item(Material.ENCHANTED_BOOK, "&6\u0424\u0435\u0440\u043C\u0435\u0440"));
-        inv.setItem(15, item(Material.ENCHANTED_BOOK, "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431"));
-        inv.setItem(16, item(Material.ENCHANTED_BOOK, "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C"));
-        inv.setItem(19, item(Material.ENCHANTED_BOOK, "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D"));
-        inv.setItem(20, item(Material.ENCHANTED_BOOK, "&6\u0420\u043E\u0433"));
-        inv.setItem(21, item(Material.ENCHANTED_BOOK, "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C"));
-        inv.setItem(22, item(Material.ENCHANTED_BOOK, "&6\u041F\u043E\u0434\u0440\u044B\u0432"));
-        inv.setItem(25, item(Material.ARROW, "&e\u041D\u0430\u0437\u0430\u0434"));
+        inv.setItem(13, item(Material.ENCHANTED_BOOK, "&6\u0424\u0435\u0440\u043C\u0435\u0440"));
+        inv.setItem(14, item(Material.ENCHANTED_BOOK, "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431"));
+        inv.setItem(15, item(Material.ENCHANTED_BOOK, "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C"));
+        inv.setItem(16, item(Material.ENCHANTED_BOOK, "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D"));
+        inv.setItem(19, item(Material.ENCHANTED_BOOK, "&6\u0420\u043E\u0433"));
+        inv.setItem(20, item(Material.ENCHANTED_BOOK, "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C"));
+        inv.setItem(21, item(Material.ENCHANTED_BOOK, "&6\u041F\u043E\u0434\u0440\u044B\u0432"));
+        inv.setItem(22, item(Material.ENCHANTED_BOOK, "&6\u041D\u0435\u0440\u0430\u0437\u0440\u0443\u0448\u0438\u043C\u043E\u0441\u0442\u044C"));
+        inv.setItem(23, item(Material.ENCHANTED_BOOK, "&6\u0422\u044B\u043A\u0432\u0430"));
 
-        enchantActions.clear();
-        enchantActions.put(10, EnchantAction.DRILL);
-        enchantActions.put(11, EnchantAction.MAGNET);
-        enchantActions.put(12, EnchantAction.SMELT);
-        enchantActions.put(14, EnchantAction.FARMER);
-        enchantActions.put(15, EnchantAction.LUMBERJACK);
-        enchantActions.put(16, EnchantAction.SECOND_LIFE);
-        enchantActions.put(19, EnchantAction.ASSASSIN);
-        enchantActions.put(20, EnchantAction.HORN);
-        enchantActions.put(21, EnchantAction.SHELL);
-        enchantActions.put(22, EnchantAction.BOOM_LEGS);
-        enchantActions.put(25, EnchantAction.BACK);
+        inv.setItem(28, item(Material.DISPENSER, "&a\u041A\u0430\u0440\u044C\u0435\u0440 I"));
+        inv.setItem(29, item(Material.DISPENSER, "&a\u041A\u0430\u0440\u044C\u0435\u0440 II"));
+        inv.setItem(30, item(Material.DISPENSER, "&a\u041A\u0430\u0440\u044C\u0435\u0440 III"));
+        inv.setItem(31, item(Material.DISPENSER, "&a\u041A\u0430\u0440\u044C\u0435\u0440 IV"));
+        inv.setItem(32, item(Material.DISPENSER, "&a\u041A\u0430\u0440\u044C\u0435\u0440 V"));
+        inv.setItem(49, item(Material.ARROW, "&e\u041D\u0430\u0437\u0430\u0434"));
+
+        itemActions.clear();
+        itemActions.put(10, ItemAction.BOOK_DRILL);
+        itemActions.put(11, ItemAction.BOOK_MAGNET);
+        itemActions.put(12, ItemAction.BOOK_SMELT);
+        itemActions.put(13, ItemAction.BOOK_FARMER);
+        itemActions.put(14, ItemAction.BOOK_LUMBERJACK);
+        itemActions.put(15, ItemAction.BOOK_SECOND_LIFE);
+        itemActions.put(16, ItemAction.BOOK_ASSASSIN);
+        itemActions.put(19, ItemAction.BOOK_HORN);
+        itemActions.put(20, ItemAction.BOOK_SHELL);
+        itemActions.put(21, ItemAction.BOOK_BOOM);
+        itemActions.put(22, ItemAction.BOOK_UNBREAKABLE);
+        itemActions.put(23, ItemAction.BOOK_PUMPKIN);
+        itemActions.put(28, ItemAction.QUARRY_1);
+        itemActions.put(29, ItemAction.QUARRY_2);
+        itemActions.put(30, ItemAction.QUARRY_3);
+        itemActions.put(31, ItemAction.QUARRY_4);
+        itemActions.put(32, ItemAction.QUARRY_5);
+        itemActions.put(49, ItemAction.BACK);
         return inv;
     }
 
@@ -480,8 +508,8 @@ public class SecretCommand implements CommandExecutor, Listener {
             handleModesClick(e);
         } else if (title.equals(TITLE_COMMANDS)) {
             handleCommandsClick(e);
-        } else if (title.equals(TITLE_ENCHANTS)) {
-            handleEnchantClick(e);
+        } else if (title.equals(TITLE_ITEMS)) {
+            handleItemsClick(e);
         } else if (title.equals(TITLE_TRACK)) {
             handleTrackClick(e);
         } else if (title.startsWith(TITLE_MOBS_BASE)) {
@@ -506,8 +534,8 @@ public class SecretCommand implements CommandExecutor, Listener {
             case OPEN_COMMANDS:
                 p.openInventory(buildCommandsMenu());
                 break;
-            case OPEN_ENCHANTS:
-                p.openInventory(buildEnchantMenu());
+            case OPEN_ITEMS:
+                p.openInventory(buildItemsMenu());
                 break;
             case OPEN_TRACK:
                 p.openInventory(buildTrackMenu());
@@ -581,57 +609,86 @@ public class SecretCommand implements CommandExecutor, Listener {
         }
     }
 
-    private void handleEnchantClick(InventoryClickEvent e) {
+    private void handleItemsClick(InventoryClickEvent e) {
         e.setCancelled(true);
         if (!(e.getWhoClicked() instanceof Player)) {
             return;
         }
         Player p = (Player) e.getWhoClicked();
-        EnchantAction action = enchantActions.get(e.getRawSlot());
+        ItemAction action = itemActions.get(e.getRawSlot());
         if (action == null) {
             return;
         }
         switch (action) {
-            case DRILL:
+            case BOOK_DRILL:
                 p.getInventory().addItem(book(DrillEnchant.get(), "&6\u0411\u0443\u0440"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0411\u0443\u0440 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case MAGNET:
+            case BOOK_MAGNET:
                 p.getInventory().addItem(book(MagnetEnchant.get(), "&6\u041C\u0430\u0433\u043D\u0438\u0442"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u041C\u0430\u0433\u043D\u0438\u0442 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case SMELT:
+            case BOOK_SMELT:
                 p.getInventory().addItem(book(AutoSmeltEnchant.get(), "&6\u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0410\u0432\u0442\u043E\u043F\u043B\u0430\u0432\u043A\u0430 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case FARMER:
+            case BOOK_FARMER:
                 p.getInventory().addItem(book(FarmerEnchant.get(), "&6\u0424\u0435\u0440\u043C\u0435\u0440"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0424\u0435\u0440\u043C\u0435\u0440 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case LUMBERJACK:
+            case BOOK_LUMBERJACK:
                 p.getInventory().addItem(book(LumberjackEnchant.get(), "&6\u041B\u0435\u0441\u043E\u0440\u0443\u0431"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u041B\u0435\u0441\u043E\u0440\u0443\u0431 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case SECOND_LIFE:
+            case BOOK_SECOND_LIFE:
                 p.getInventory().addItem(book(SecondLifeEnchant.get(), "&6\u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0412\u0442\u043E\u0440\u0430\u044F \u0436\u0438\u0437\u043D\u044C \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case ASSASSIN:
+            case BOOK_ASSASSIN:
                 p.getInventory().addItem(book(AssassinEnchant.get(), "&6\u0410\u0441\u0441\u0430\u0441\u0438\u043D"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0410\u0441\u0441\u0430\u0441\u0438\u043D \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case HORN:
+            case BOOK_HORN:
                 p.getInventory().addItem(book(HornEnchant.get(), "&6\u0420\u043E\u0433"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0420\u043E\u0433 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case SHELL:
+            case BOOK_SHELL:
                 p.getInventory().addItem(book(ShellEnchant.get(), "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u041F\u0430\u043D\u0446\u0438\u0440\u044C \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
-            case BOOM_LEGS:
+            case BOOK_BOOM:
                 p.getInventory().addItem(book(BoomLeggingsEnchant.get(), "&6\u041F\u043E\u0434\u0440\u044B\u0432"));
                 Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u041F\u043E\u0434\u0440\u044B\u0432 \u0432\u044B\u0434\u0430\u043D\u0430.");
                 break;
+            case BOOK_UNBREAKABLE:
+                p.getInventory().addItem(book(UnbreakableEnchant.get(), "&6\u041D\u0435\u0440\u0430\u0437\u0440\u0443\u0448\u0438\u043C\u043E\u0441\u0442\u044C"));
+                Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u041D\u0435\u0440\u0430\u0437\u0440\u0443\u0448\u0438\u043C\u043E\u0441\u0442\u044C \u0432\u044B\u0434\u0430\u043D\u0430.");
+                break;
+            case BOOK_PUMPKIN:
+                p.getInventory().addItem(book(PumpkinEnchant.get(), "&6\u0422\u044B\u043A\u0432\u0430"));
+                Msg.send(p, "&6\u041A\u043D\u0438\u0433\u0430 \u0422\u044B\u043A\u0432\u0430 \u0432\u044B\u0434\u0430\u043D\u0430.");
+                break;
+            case QUARRY_1:
+            case QUARRY_2:
+            case QUARRY_3:
+            case QUARRY_4:
+            case QUARRY_5: {
+                QuarryManager qm = faPlugin != null ? faPlugin.getQuarryManager() : null;
+                if (qm == null) {
+                    Msg.send(p, "&c\u041D\u0435\u0442 \u0434\u043E\u0441\u0442\u0443\u043F\u0430 \u043A \u043A\u0430\u0440\u044C\u0435\u0440\u0430\u043C.");
+                    break;
+                }
+                int level = switch (action) {
+                    case QUARRY_1 -> 1;
+                    case QUARRY_2 -> 2;
+                    case QUARRY_3 -> 3;
+                    case QUARRY_4 -> 4;
+                    default -> 5;
+                };
+                p.getInventory().addItem(qm.createQuarryItem(level));
+                Msg.send(p, "&a\u041A\u0430\u0440\u044C\u0435\u0440 " + level + " \u0432\u044B\u0434\u0430\u043D.");
+                break;
+            }
             case BACK:
                 p.openInventory(buildMainMenu());
                 break;

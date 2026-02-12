@@ -60,7 +60,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
 
     @Override
     public boolean isEnabled() {
-        return plugin.getConfig().getBoolean("ufo.enabled", true);
+        return plugin.getEventsConfig().getBoolean("ufo.enabled", true);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
             return;
         }
 
-        FileConfiguration cfg = plugin.getConfig();
+        FileConfiguration cfg = plugin.getEventsConfig();
         Player target = Bukkit.getPlayer(pendingTargets.remove(0));
         if (target == null) {
             startNext();
@@ -168,7 +168,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
     }
 
     private void playAbductionEffects(Player target) {
-        FileConfiguration cfg = plugin.getConfig();
+        FileConfiguration cfg = plugin.getEventsConfig();
         int blindSec = cfg.getInt("ufo.abduction_effects.blindness_seconds", 3);
         int levSec = cfg.getInt("ufo.abduction_effects.levitation_seconds", 2);
         target.addPotionEffect(new PotionEffect(org.bukkit.potion.PotionEffectType.BLINDNESS, blindSec * 20, 0));
@@ -193,7 +193,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
     }
 
     private void handleTempKeepInventory(Player target) {
-        FileConfiguration cfg = plugin.getConfig();
+        FileConfiguration cfg = plugin.getEventsConfig();
         boolean enabled = cfg.getBoolean("ufo.temp_keep_inventory.enabled", false);
         if (!enabled) {
             return;
@@ -214,7 +214,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
 
     private void spawnSaucer(Location base) {
         removeSaucer();
-        FileConfiguration cfg = plugin.getConfig();
+        FileConfiguration cfg = plugin.getEventsConfig();
         boolean enabled = cfg.getBoolean("ufo.saucer.enabled", true);
         if (!enabled) {
             return;
@@ -316,7 +316,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
     }
 
     private void spawnAliens(Location center, int radius) {
-        FileConfiguration cfg = plugin.getConfig();
+        FileConfiguration cfg = plugin.getEventsConfig();
         List<Map<?, ?>> list = cfg.getMapList("ufo.aliens");
         for (Map<?, ?> raw : list) {
             String typeName = raw.get("type") != null ? raw.get("type").toString() : "ZOMBIE";
@@ -382,7 +382,7 @@ public class UfoAbductionEvent implements EventManager.EventController {
     }
 
     private void rewardAndReturn(Player p) {
-        List<ItemStack> loot = ConfigUtil.rollLoot(plugin, "ufo.reward.loot");
+        List<ItemStack> loot = ConfigUtil.rollLoot(plugin.getEventsConfig(), "ufo.reward.loot");
         if (loot.isEmpty()) {
             loot.add(new ItemStack(Material.IRON_INGOT, 3));
         }
@@ -470,3 +470,5 @@ public class UfoAbductionEvent implements EventManager.EventController {
         return running;
     }
 }
+
+

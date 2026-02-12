@@ -1,0 +1,93 @@
+# Casino configuration
+
+casino:
+  enabled: true
+  wheel:
+    bets: [1, 4, 8, 16, 32]
+    win_base: 25
+    win_per_bet: 3
+    lose_base: 50
+    spin_ticks: 60
+    spin_interval_ticks: 2
+    rewards:
+      r1:
+        type: NOTHING
+        weight: 50
+      r2:
+        type: MATERIAL
+        material: DIAMOND
+        amount: 2
+        weight: 20
+      r3:
+        type: MATERIAL
+        material: DIAMOND_BLOCK
+        amount: 1
+        weight: 8
+      r4:
+        type: MATERIAL
+        material: IRON_INGOT
+        amount: 16
+        weight: 12
+      r5:
+        type: MATERIAL
+        material: GOLD_INGOT
+        amount: 8
+        weight: 10
+      r6:
+        type: MATERIAL
+        material: IRON_CHESTPLATE
+        amount: 1
+        weight: 6
+      r7:
+        type: MATERIAL
+        material: DIAMOND_CHESTPLATE
+        amount: 1
+        weight: 4
+      r8:
+        type: BOOK
+        enchant: DRILL
+        weight: 5
+      r9:
+        type: BOOK
+        enchant: MAGNET
+        weight: 5
+      r10:
+        type: BOOK
+        enchant: AUTOSMELT
+        weight: 3
+      r11:
+        type: BOOK
+        enchant: SECOND_LIFE
+        weight: 2
+      r12:
+        type: BOOK
+        enchant: ASSASSIN
+        weight: 2
+      r13:
+        type: BOOK
+        enchant: HORN
+        weight: 2
+      r14:
+        type: BOOK
+        enchant: SHELL
+        weight: 2
+      r15:
+        type: BOOK
+        enchant: BOOM
+        weight: 2
+      r16:
+        type: QUARRY
+        level: 1
+        weight: 3
+      r17:
+        type: QUARRY
+        level: 2
+        weight: 2
+      r18:
+        type: MATERIAL
+        material: NETHERITE_INGOT
+        amount: 1
+        weight: 2
+  mystery:
+    win_base: 20
+    win_per_bet: 2

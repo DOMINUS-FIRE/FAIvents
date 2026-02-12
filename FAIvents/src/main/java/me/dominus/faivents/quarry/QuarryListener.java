@@ -30,21 +30,48 @@ import org.bukkit.inventory.meta.ItemMeta;
 import me.dominus.faivents.quarry.QuarryManager.FilterMode;
 import me.dominus.faivents.quarry.QuarryManager.QuarryData;
 import me.dominus.faivents.util.Msg;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 public final class QuarryListener implements Listener {
 
     private static final String GUI_TITLE = "\u041A\u0430\u0440\u044C\u0435\u0440";
+    private static final String MAIN_TITLE = "\u041A\u0430\u0440\u044C\u0435\u0440: \u041C\u0435\u043D\u044E";
+    private static final String FUEL_TITLE = "\u041A\u0430\u0440\u044C\u0435\u0440: \u0422\u043E\u043F\u043B\u0438\u0432\u043E";
+    private static final String SETTINGS_TITLE = "\u041A\u0430\u0440\u044C\u0435\u0440: \u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438";
+    private static final String STORAGE_TITLE = "\u041A\u0430\u0440\u044C\u0435\u0440: \u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435";
     private static final String FILTER_TITLE = "\u0424\u0438\u043B\u044C\u0442\u0440";
-    private static final int GUI_SIZE = 54;
-    private static final int STORAGE_START = 9;
-    private static final int STORAGE_END = 53;
-    private static final int FUEL_SLOT = 2;
+    private static final int MAIN_SIZE = 27;
+    private static final int STORAGE_GUI_SIZE = 54;
+    private static final int STORAGE_START = 0;
+    private static final int STORAGE_END = 44;
+    private static final int STORAGE_PREV = 45;
+    private static final int STORAGE_INFO = 47;
+    private static final int STORAGE_BACK = 49;
+    private static final int STORAGE_NEXT = 53;
+    private static final int FUEL_INPUT_SLOT = 13;
+    private static final int FUEL_SOLAR_SLOT = 11;
+    private static final int FUEL_BACK_SLOT = 18;
+    private static final int MAIN_FUEL_SLOT = 11;
+    private static final int MAIN_TOGGLE_SLOT = 13;
+    private static final int MAIN_SETTINGS_SLOT = 15;
+    private static final int MAIN_STORAGE_SLOT = 22;
+    private static final int SETTINGS_SILK_SLOT = 11;
+    private static final int SETTINGS_FILTER_SLOT = 13;
+    private static final int SETTINGS_CHUNKS_SLOT = 15;
+    private static final int SETTINGS_BACK_SLOT = 18;
 
     private final QuarryManager quarryManager;
-    private final Map<UUID, Location> openGui = new HashMap<>();
+    private final JavaPlugin plugin;
+    private final Map<UUID, Location> openMain = new HashMap<>();
+    private final Map<UUID, Location> openStorage = new HashMap<>();
+    private final Map<UUID, Location> openFuel = new HashMap<>();
+    private final Map<UUID, Location> openSettings = new HashMap<>();
     private final Map<UUID, Location> openFilter = new HashMap<>();
 
-    public QuarryListener(QuarryManager quarryManager) {
+    public QuarryListener(JavaPlugin plugin, QuarryManager quarryManager) {
+        this.plugin = plugin;
         this.quarryManager = quarryManager;
     }
 
@@ -66,11 +93,15 @@ public final class QuarryListener implements Listener {
     }
 
     public void openRemoteStorage(Player player, Block block) {
+        if (!canAccess(player, block)) {
+            Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
+            return;
+        }
         QuarryData qd = quarryManager.getData(block);
         if (qd == null) {
             return;
         }
-        openMainGui(player, block, qd.page);
+        openStorageGui(player, block, qd.page);
     }
 
     @EventHandler
@@ -113,11 +144,11 @@ public final class QuarryListener implements Listener {
         }
         event.setCancelled(true);
         Player player = event.getPlayer();
-        if (!player.getUniqueId().equals(quarryManager.getOwner(block))) {
+        if (!canAccess(player, block)) {
             Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
             return;
         }
-        openMainGui(player, block, 0);
+        openMainGui(player, block);
     }
 
     @EventHandler
@@ -126,72 +157,40 @@ public final class QuarryListener implements Listener {
             return;
         }
         String title = event.getView().getTitle();
-        if (!title.startsWith(GUI_TITLE) && !title.startsWith(FILTER_TITLE)) {
+        if (!title.startsWith(MAIN_TITLE) && !title.startsWith(FUEL_TITLE)
+                && !title.startsWith(SETTINGS_TITLE) && !title.startsWith(STORAGE_TITLE)
+                && !title.startsWith(FILTER_TITLE)) {
+            return;
+        }
+        int topSize = event.getView().getTopInventory().getSize();
+        int raw = event.getRawSlot();
+        if (raw >= topSize) {
+            if (!event.isShiftClick()) {
+                event.setCancelled(false);
+            } else {
+                event.setCancelled(true);
+            }
             return;
         }
         event.setCancelled(true);
-        int raw = event.getRawSlot();
         if (title.startsWith(FILTER_TITLE)) {
             handleFilterClick(player, raw, event);
             return;
         }
-        Location loc = openGui.get(player.getUniqueId());
-        if (loc == null) {
+        if (title.startsWith(MAIN_TITLE)) {
+            handleMainClick(player, raw);
             return;
         }
-        Block block = loc.getBlock();
-        if (!quarryManager.isQuarryBlock(block)) {
+        if (title.startsWith(FUEL_TITLE)) {
+            handleFuelGuiClick(player, raw, event);
             return;
         }
-        QuarryData qd = quarryManager.getData(block);
-        if (qd == null) {
+        if (title.startsWith(SETTINGS_TITLE)) {
+            handleSettingsClick(player, raw);
             return;
         }
-        int level = qd.level;
-        switch (raw) {
-            case 0:
-                quarryManager.setRunning(block, true);
-                openMainGui(player, block, qd.page);
-                return;
-            case 1:
-                quarryManager.setRunning(block, false);
-                openMainGui(player, block, qd.page);
-                return;
-            case FUEL_SLOT:
-                handleFuelClick(event, player, block, qd);
-                return;
-            case 3:
-                if (qd.page > 0) {
-                    openMainGui(player, block, qd.page - 1);
-                }
-                return;
-            case 5:
-                if (hasNextPage(qd)) {
-                    openMainGui(player, block, qd.page + 1);
-                }
-                return;
-            case 6:
-                if (level >= 4) {
-                    quarryManager.setSilk(block, !quarryManager.isSilk(block));
-                    openMainGui(player, block, qd.page);
-                }
-                return;
-            case 7:
-                if (level >= 5) {
-                    quarryManager.setMultiChunk(block, !quarryManager.isMultiChunk(block));
-                    openMainGui(player, block, qd.page);
-                }
-                return;
-            case 8:
-                if (level >= 4) {
-                    openFilterGui(player, block);
-                }
-                return;
-            default:
-                break;
-        }
-        if (raw >= STORAGE_START && raw <= STORAGE_END) {
-            handleStorageClick(event, player, block, qd, raw);
+        if (title.startsWith(STORAGE_TITLE)) {
+            handleStorageGuiClick(player, raw, event);
         }
     }
 
@@ -201,14 +200,23 @@ public final class QuarryListener implements Listener {
             return;
         }
         String title = event.getView().getTitle();
-        if (title.startsWith(GUI_TITLE)) {
+        if (title.startsWith(MAIN_TITLE)) {
+            scheduleMapCleanup(player, openMain, MAIN_TITLE);
+        }
+        if (title.startsWith(STORAGE_TITLE)) {
             saveStorage(player, event.getInventory());
+            scheduleMapCleanup(player, openStorage, STORAGE_TITLE);
+        }
+        if (title.startsWith(FUEL_TITLE)) {
             handleFuelClose(player, event.getInventory());
-            openGui.remove(player.getUniqueId());
+            scheduleMapCleanup(player, openFuel, FUEL_TITLE);
         }
         if (title.startsWith(FILTER_TITLE)) {
             saveFilter(player, event.getInventory());
-            openFilter.remove(player.getUniqueId());
+            scheduleMapCleanup(player, openFilter, FILTER_TITLE);
+        }
+        if (title.startsWith(SETTINGS_TITLE)) {
+            scheduleMapCleanup(player, openSettings, SETTINGS_TITLE);
         }
     }
 
@@ -243,6 +251,11 @@ public final class QuarryListener implements Listener {
         if (qd == null) {
             return;
         }
+        if (!canAccess(player, block)) {
+            Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
+            player.closeInventory();
+            return;
+        }
         if (raw == 45) {
             FilterMode mode = quarryManager.getFilterMode(block);
             quarryManager.setFilterMode(block, mode == FilterMode.KEEP ? FilterMode.DELETE : FilterMode.KEEP);
@@ -254,49 +267,18 @@ public final class QuarryListener implements Listener {
         }
     }
 
-    private void openMainGui(Player player, Block block, int page) {
+    private void openMainGui(Player player, Block block) {
         QuarryData qd = quarryManager.getData(block);
         if (qd == null) {
             return;
         }
-        qd.page = Math.max(0, page);
-        Inventory inv = Bukkit.createInventory(null, GUI_SIZE, GUI_TITLE + " \u0423\u0440\u043E\u0432\u0435\u043D\u044C " + qd.level);
-        fillBorder(inv);
-
-        inv.setItem(0, button(Material.LIME_DYE, "&a\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C"));
-        inv.setItem(1, button(Material.RED_DYE, "&c\u041E\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C"));
-        inv.setItem(FUEL_SLOT, button(Material.COAL, "&6\u0422\u043E\u043F\u043B\u0438\u0432\u043E"));
-        inv.setItem(3, button(Material.ARROW, "&e\u041F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0430\u044F"));
-        inv.setItem(5, button(Material.ARROW, "&e\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F"));
+        Inventory inv = Bukkit.createInventory(null, MAIN_SIZE, MAIN_TITLE + " " + qd.level);
         inv.setItem(4, info(block, qd));
-
-        if (qd.level >= 4) {
-            inv.setItem(6, button(Material.ENCHANTED_BOOK, "&6\u0428\u0451\u043B\u043A\u043E\u0432\u043E\u0435: " + (quarryManager.isSilk(block) ? "&a\u0412\u043A\u043B" : "&c\u0412\u044B\u043A\u043B")));
-            inv.setItem(8, button(Material.HOPPER, "&e\u0424\u0438\u043B\u044C\u0442\u0440"));
-        }
-        if (qd.level >= 5) {
-            inv.setItem(7, button(Material.MAP, "&b\u0427\u0430\u043D\u043A\u0438 \u0432\u043E\u043A\u0440\u0443\u0433: " + (quarryManager.isMultiChunk(block) ? "&a\u0412\u043A\u043B" : "&c\u0412\u044B\u043A\u043B")));
-        }
-
-        if (qd.level == 1) {
-            for (int i = STORAGE_START; i <= STORAGE_END; i++) {
-                inv.setItem(i, placeholder());
-            }
-        } else {
-            int start = qd.page * storagePageSize();
-            for (int i = 0; i < storagePageSize(); i++) {
-                int idx = start + i;
-                int slot = STORAGE_START + i;
-                if (slot > STORAGE_END) {
-                    break;
-                }
-                ItemStack it = idx < qd.storage.size() ? qd.storage.get(idx) : null;
-                if (it != null) {
-                    inv.setItem(slot, it);
-                }
-            }
-        }
-        openGui.put(player.getUniqueId(), block.getLocation());
+        inv.setItem(MAIN_FUEL_SLOT, button(Material.COAL, "&6\u0422\u043E\u043F\u043B\u0438\u0432\u043E"));
+        inv.setItem(MAIN_TOGGLE_SLOT, toggleButton(block));
+        inv.setItem(MAIN_SETTINGS_SLOT, button(Material.COMPARATOR, "&e\u041D\u0430\u0441\u0442\u0440\u043E\u0439\u043A\u0438"));
+        inv.setItem(MAIN_STORAGE_SLOT, button(Material.CHEST, "&b\u0425\u0440\u0430\u043D\u0438\u043B\u0438\u0449\u0435"));
+        openMain.put(player.getUniqueId(), block.getLocation());
         player.openInventory(inv);
     }
 
@@ -315,12 +297,239 @@ public final class QuarryListener implements Listener {
         }
     }
 
+    private void openFuelGui(Player player, Block block) {
+        QuarryData qd = quarryManager.getData(block);
+        if (qd == null) {
+            return;
+        }
+        Inventory inv = Bukkit.createInventory(null, MAIN_SIZE, FUEL_TITLE);
+        inv.setItem(4, info(block, qd));
+        inv.setItem(FUEL_SOLAR_SLOT, solarButton(block, qd.level));
+        inv.setItem(FUEL_BACK_SLOT, button(Material.BARRIER, "&c\u041D\u0430\u0437\u0430\u0434"));
+        openFuel.put(player.getUniqueId(), block.getLocation());
+        player.openInventory(inv);
+    }
+
+    private void openSettingsGui(Player player, Block block) {
+        QuarryData qd = quarryManager.getData(block);
+        if (qd == null) {
+            return;
+        }
+        Inventory inv = Bukkit.createInventory(null, MAIN_SIZE, SETTINGS_TITLE);
+        inv.setItem(4, info(block, qd));
+        if (qd.level >= 4) {
+            inv.setItem(SETTINGS_SILK_SLOT, button(Material.ENCHANTED_BOOK,
+                    "&6\u0428\u0451\u043B\u043A\u043E\u0432\u043E\u0435: " + (quarryManager.isSilk(block) ? "&a\u0412\u043A\u043B" : "&c\u0412\u044B\u043A\u043B")));
+            inv.setItem(SETTINGS_FILTER_SLOT, button(Material.HOPPER, "&e\u0424\u0438\u043B\u044C\u0442\u0440"));
+        } else {
+            inv.setItem(SETTINGS_SILK_SLOT, button(Material.BARRIER, "&c\u041D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E"));
+            inv.setItem(SETTINGS_FILTER_SLOT, button(Material.BARRIER, "&c\u041D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E"));
+        }
+        if (qd.level >= 5) {
+            inv.setItem(SETTINGS_CHUNKS_SLOT, button(Material.MAP,
+                    "&b\u0427\u0430\u043D\u043A\u0438 \u0432\u043E\u043A\u0440\u0443\u0433: " + (quarryManager.isMultiChunk(block) ? "&a\u0412\u043A\u043B" : "&c\u0412\u044B\u043A\u043B")));
+        } else {
+            inv.setItem(SETTINGS_CHUNKS_SLOT, button(Material.BARRIER, "&c\u041D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E"));
+        }
+        inv.setItem(SETTINGS_BACK_SLOT, button(Material.BARRIER, "&c\u041D\u0430\u0437\u0430\u0434"));
+        openSettings.put(player.getUniqueId(), block.getLocation());
+        player.openInventory(inv);
+    }
+
+    private void openStorageGui(Player player, Block block, int page) {
+        QuarryData qd = quarryManager.getData(block);
+        if (qd == null) {
+            return;
+        }
+        qd.page = Math.max(0, page);
+        Inventory inv = Bukkit.createInventory(null, STORAGE_GUI_SIZE, STORAGE_TITLE + " " + qd.level);
+        if (qd.level == 1) {
+            for (int i = STORAGE_START; i <= STORAGE_END; i++) {
+                inv.setItem(i, placeholder());
+            }
+        } else {
+            int start = qd.page * storagePageSize();
+            for (int i = 0; i < storagePageSize(); i++) {
+                int idx = start + i;
+                int slot = STORAGE_START + i;
+                if (slot > STORAGE_END) {
+                    break;
+                }
+                ItemStack it = idx < qd.storage.size() ? qd.storage.get(idx) : null;
+                if (it != null) {
+                    inv.setItem(slot, it);
+                }
+            }
+        }
+        inv.setItem(STORAGE_PREV, button(Material.ARROW, "&e\u041F\u0440\u0435\u0434\u044B\u0434\u0443\u0449\u0430\u044F"));
+        inv.setItem(STORAGE_NEXT, button(Material.ARROW, "&e\u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0430\u044F"));
+        inv.setItem(STORAGE_BACK, button(Material.BARRIER, "&c\u041D\u0430\u0437\u0430\u0434"));
+        inv.setItem(STORAGE_INFO, info(block, qd));
+        openStorage.put(player.getUniqueId(), block.getLocation());
+        player.openInventory(inv);
+    }
+
+    private void handleMainClick(Player player, int raw) {
+        Location loc = openMain.get(player.getUniqueId());
+        if (loc == null) {
+            return;
+        }
+        Block block = loc.getBlock();
+        if (!quarryManager.isQuarryBlock(block)) {
+            return;
+        }
+        if (!canAccess(player, block)) {
+            Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
+            player.closeInventory();
+            return;
+        }
+        if (raw == MAIN_FUEL_SLOT) {
+            openFuelGui(player, block);
+            return;
+        }
+        if (raw == MAIN_TOGGLE_SLOT) {
+            boolean running = quarryManager.isRunning(block);
+            if (!running) {
+                if (quarryManager.getFuel(block) <= 0 && !quarryManager.isSolarEnabled(block)) {
+                    Msg.send(player, "&c\u041D\u0435\u0442 \u0442\u043E\u043F\u043B\u0438\u0432\u0430.");
+                    return;
+                }
+                quarryManager.setRunning(block, true);
+                quarryManager.startQuarry(block);
+            } else {
+                quarryManager.setRunning(block, false);
+            }
+            openMainGui(player, block);
+            return;
+        }
+        if (raw == MAIN_SETTINGS_SLOT) {
+            openSettingsGui(player, block);
+            return;
+        }
+        if (raw == MAIN_STORAGE_SLOT) {
+            QuarryData qd = quarryManager.getData(block);
+            if (qd != null) {
+                openStorageGui(player, block, qd.page);
+            }
+        }
+    }
+
+    private void handleFuelGuiClick(Player player, int raw, InventoryClickEvent event) {
+        Location loc = openFuel.get(player.getUniqueId());
+        if (loc == null) {
+            return;
+        }
+        Block block = loc.getBlock();
+        if (!quarryManager.isQuarryBlock(block)) {
+            return;
+        }
+        if (!canAccess(player, block)) {
+            Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
+            player.closeInventory();
+            return;
+        }
+        QuarryData qd = quarryManager.getData(block);
+        if (qd == null) {
+            return;
+        }
+        if (raw == FUEL_BACK_SLOT) {
+            openMainGui(player, block);
+            return;
+        }
+        if (raw == FUEL_SOLAR_SLOT) {
+            if (qd.level >= 3) {
+                quarryManager.setSolarEnabled(block, !quarryManager.isSolarEnabled(block));
+            }
+            openFuelGui(player, block);
+            return;
+        }
+        if (raw == FUEL_INPUT_SLOT) {
+            handleFuelClick(event, player, block, qd);
+        }
+    }
+
+    private void handleSettingsClick(Player player, int raw) {
+        Location loc = openSettings.get(player.getUniqueId());
+        if (loc == null) {
+            return;
+        }
+        Block block = loc.getBlock();
+        if (!quarryManager.isQuarryBlock(block)) {
+            return;
+        }
+        if (!canAccess(player, block)) {
+            Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
+            player.closeInventory();
+            return;
+        }
+        QuarryData qd = quarryManager.getData(block);
+        if (qd == null) {
+            return;
+        }
+        if (raw == SETTINGS_BACK_SLOT) {
+            openMainGui(player, block);
+            return;
+        }
+        if (raw == SETTINGS_SILK_SLOT && qd.level >= 4) {
+            quarryManager.setSilk(block, !quarryManager.isSilk(block));
+            openSettingsGui(player, block);
+            return;
+        }
+        if (raw == SETTINGS_CHUNKS_SLOT && qd.level >= 5) {
+            quarryManager.setMultiChunk(block, !quarryManager.isMultiChunk(block));
+            openSettingsGui(player, block);
+            return;
+        }
+        if (raw == SETTINGS_FILTER_SLOT && qd.level >= 4) {
+            openFilterGui(player, block);
+        }
+    }
+
+    private void handleStorageGuiClick(Player player, int raw, InventoryClickEvent event) {
+        Location loc = openStorage.get(player.getUniqueId());
+        if (loc == null) {
+            return;
+        }
+        Block block = loc.getBlock();
+        if (!quarryManager.isQuarryBlock(block)) {
+            return;
+        }
+        if (!canAccess(player, block)) {
+            Msg.send(player, "&c\u042D\u0442\u043E \u043D\u0435 \u0442\u0432\u043E\u0439 \u043A\u0430\u0440\u044C\u0435\u0440.");
+            player.closeInventory();
+            return;
+        }
+        QuarryData qd = quarryManager.getData(block);
+        if (qd == null) {
+            return;
+        }
+        if (raw == STORAGE_BACK) {
+            openMainGui(player, block);
+            return;
+        }
+        if (raw == STORAGE_PREV) {
+            if (qd.page > 0) {
+                openStorageGui(player, block, qd.page - 1);
+            }
+            return;
+        }
+        if (raw == STORAGE_NEXT) {
+            if (hasNextPage(qd)) {
+                openStorageGui(player, block, qd.page + 1);
+            }
+            return;
+        }
+        if (raw >= STORAGE_START && raw <= STORAGE_END) {
+            handleStorageClick(event, player, block, qd, raw);
+        }
+    }
+
     private void openFilterGui(Player player, Block block) {
         QuarryData qd = quarryManager.getData(block);
         if (qd == null) {
             return;
         }
-        Inventory inv = Bukkit.createInventory(null, GUI_SIZE, FILTER_TITLE);
+        Inventory inv = Bukkit.createInventory(null, STORAGE_GUI_SIZE, FILTER_TITLE);
         int i = 0;
         for (Material mat : qd.filter) {
             if (i >= 45) {
@@ -335,12 +544,15 @@ public final class QuarryListener implements Listener {
     }
 
     private void saveStorage(Player player, Inventory inv) {
-        Location loc = openGui.get(player.getUniqueId());
+        Location loc = openStorage.get(player.getUniqueId());
         if (loc == null) {
             return;
         }
         QuarryData qd = quarryManager.getData(loc.getBlock());
         if (qd == null || qd.level == 1) {
+            return;
+        }
+        if (!canAccess(player, loc.getBlock())) {
             return;
         }
         int start = qd.page * storagePageSize();
@@ -356,7 +568,7 @@ public final class QuarryListener implements Listener {
     }
 
     private void handleFuelClose(Player player, Inventory inv) {
-        Location loc = openGui.get(player.getUniqueId());
+        Location loc = openFuel.get(player.getUniqueId());
         if (loc == null) {
             return;
         }
@@ -365,7 +577,10 @@ public final class QuarryListener implements Listener {
         if (qd == null) {
             return;
         }
-        ItemStack fuel = inv.getItem(FUEL_SLOT);
+        if (!canAccess(player, block)) {
+            return;
+        }
+        ItemStack fuel = inv.getItem(FUEL_INPUT_SLOT);
         if (fuel == null || fuel.getType() == Material.AIR) {
             return;
         }
@@ -375,7 +590,7 @@ public final class QuarryListener implements Listener {
         }
         int amount = fuel.getAmount();
         quarryManager.addFuel(block, per * amount);
-        inv.setItem(FUEL_SLOT, null);
+        inv.setItem(FUEL_INPUT_SLOT, null);
         if (fuel.getType() == Material.LAVA_BUCKET) {
             ItemStack buckets = new ItemStack(Material.BUCKET, amount);
             Map<Integer, ItemStack> left = player.getInventory().addItem(buckets);
@@ -394,6 +609,9 @@ public final class QuarryListener implements Listener {
         }
         QuarryData qd = quarryManager.getData(loc.getBlock());
         if (qd == null) {
+            return;
+        }
+        if (!canAccess(player, loc.getBlock())) {
             return;
         }
         EnumSet<Material> set = EnumSet.noneOf(Material.class);
@@ -450,16 +668,32 @@ public final class QuarryListener implements Listener {
         return it;
     }
 
-    private void fillBorder(Inventory inv) {
-        ItemStack pane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta meta = pane.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(" ");
-            pane.setItemMeta(meta);
+    private ItemStack toggleButton(Block block) {
+        boolean running = quarryManager.isRunning(block);
+        if (running) {
+            return button(Material.RED_DYE, "&c\u041E\u0441\u0442\u0430\u043D\u043E\u0432\u0438\u0442\u044C");
         }
-        for (int i = 0; i < 9; i++) {
-            inv.setItem(i, pane);
+        return button(Material.LIME_DYE, "&a\u0417\u0430\u043F\u0443\u0441\u0442\u0438\u0442\u044C");
+    }
+
+    private ItemStack solarButton(Block block, int level) {
+        if (level < 3) {
+            return button(Material.BARRIER, "&c\u0421\u043E\u043B\u043D\u0446\u0435: \u043D\u0435\u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E");
         }
+        return button(Material.DAYLIGHT_DETECTOR,
+                "&e\u0421\u043E\u043B\u043D\u0446\u0435: " + (quarryManager.isSolarEnabled(block) ? "&a\u0412\u043A\u043B" : "&c\u0412\u044B\u043A\u043B"));
+    }
+
+    private void scheduleMapCleanup(Player player, Map<UUID, Location> map, String prefix) {
+        if (player == null) {
+            return;
+        }
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            String current = player.getOpenInventory().getTitle();
+            if (current == null || !current.startsWith(prefix)) {
+                map.remove(player.getUniqueId());
+            }
+        });
     }
 
     private boolean isFuel(ItemStack item, int level) {
@@ -510,6 +744,35 @@ public final class QuarryListener implements Listener {
             }
         }
         return false;
+    }
+
+    private boolean canAccess(Player player, Block block) {
+        if (player == null || block == null) {
+            return false;
+        }
+        if (player.isOp()) {
+            return true;
+        }
+        UUID owner = quarryManager.getOwner(block);
+        if (owner != null && owner.equals(player.getUniqueId())) {
+            return true;
+        }
+        if (owner == null) {
+            return false;
+        }
+        String ownerName = Bukkit.getOfflinePlayer(owner).getName();
+        if (ownerName == null) {
+            return false;
+        }
+        Scoreboard main = Bukkit.getScoreboardManager() != null
+                ? Bukkit.getScoreboardManager().getMainScoreboard()
+                : null;
+        if (main == null) {
+            return false;
+        }
+        Team playerTeam = main.getEntryTeam(player.getName());
+        Team ownerTeam = main.getEntryTeam(ownerName);
+        return playerTeam != null && playerTeam.equals(ownerTeam);
     }
 
     private List<QuarryData> quarryManagerAll() {

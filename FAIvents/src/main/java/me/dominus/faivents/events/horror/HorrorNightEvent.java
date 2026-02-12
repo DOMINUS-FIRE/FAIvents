@@ -55,7 +55,7 @@ public class HorrorNightEvent implements EventManager.EventController {
 
     @Override
     public boolean isEnabled() {
-        return plugin.getConfig().getBoolean("horror_night.enabled", true);
+        return plugin.getEventsConfig().getBoolean("horror_night.enabled", true);
     }
 
     @Override
@@ -97,11 +97,11 @@ public class HorrorNightEvent implements EventManager.EventController {
         oldTime = world.getTime();
         world.setTime(18000L);
 
-        int durationMin = plugin.getConfig().getInt("horror_night.duration_minutes", 8);
+        int durationMin = plugin.getEventsConfig().getInt("horror_night.duration_minutes", 8);
         int durationSeconds = durationMin * 60;
         int durationTicks = durationSeconds * 20;
 
-        int waveInterval = plugin.getConfig().getInt("horror_night.wave_interval_seconds", 60);
+        int waveInterval = plugin.getEventsConfig().getInt("horror_night.wave_interval_seconds", 60);
         waveTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -139,7 +139,7 @@ public class HorrorNightEvent implements EventManager.EventController {
     }
 
     private void spawnExtraMobs() {
-        List<Map<?, ?>> list = plugin.getConfig().getMapList("horror_night.extra_spawns");
+        List<Map<?, ?>> list = plugin.getEventsConfig().getMapList("horror_night.extra_spawns");
         for (Player p : targets.values()) {
             for (Map<?, ?> raw : list) {
                 String typeName = raw.get("type") != null ? raw.get("type").toString() : "ZOMBIE";
@@ -197,9 +197,9 @@ public class HorrorNightEvent implements EventManager.EventController {
     }
 
     private void buffNearbyMobs() {
-        double radius = plugin.getConfig().getDouble("horror_night.mob_buff.radius", 24.0);
-        double hpMul = plugin.getConfig().getDouble("horror_night.mob_buff.health_multiplier", 1.5);
-        double dmgMul = plugin.getConfig().getDouble("horror_night.mob_buff.damage_multiplier", 1.4);
+        double radius = plugin.getEventsConfig().getDouble("horror_night.mob_buff.radius", 24.0);
+        double hpMul = plugin.getEventsConfig().getDouble("horror_night.mob_buff.health_multiplier", 1.5);
+        double dmgMul = plugin.getEventsConfig().getDouble("horror_night.mob_buff.damage_multiplier", 1.4);
 
         for (Player p : targets.values()) {
             for (org.bukkit.entity.Entity e : p.getWorld().getNearbyEntities(p.getLocation(), radius, radius, radius)) {
@@ -230,8 +230,8 @@ public class HorrorNightEvent implements EventManager.EventController {
     }
 
     private void playAmbience() {
-        String particleName = plugin.getConfig().getString("horror_night.ambience.particle", "SMOKE_LARGE");
-        String soundName = plugin.getConfig().getString("horror_night.ambience.sound", "AMBIENT_CAVE");
+        String particleName = plugin.getEventsConfig().getString("horror_night.ambience.particle", "SMOKE_LARGE");
+        String soundName = plugin.getEventsConfig().getString("horror_night.ambience.sound", "AMBIENT_CAVE");
         Particle particle = Particle.SMOKE_LARGE;
         Sound sound = Sound.AMBIENT_CAVE;
         try {

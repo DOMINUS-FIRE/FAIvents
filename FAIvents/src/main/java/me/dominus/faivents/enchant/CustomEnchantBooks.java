@@ -21,16 +21,16 @@ public final class CustomEnchantBooks {
         if (plugin == null || loot == null) {
             return;
         }
-        boolean enabled = plugin.getConfig().getBoolean(path + ".enabled", true);
+        boolean enabled = plugin.getEventsConfig().getBoolean(path + ".enabled", true);
         if (!enabled) {
             return;
         }
-        double chance = plugin.getConfig().getDouble(path + ".chance", 0.25);
+        double chance = plugin.getEventsConfig().getDouble(path + ".chance", 0.25);
         if (Math.random() > chance) {
             return;
         }
 
-        List<Map<?, ?>> list = plugin.getConfig().getMapList(path + ".list");
+        List<Map<?, ?>> list = plugin.getEventsConfig().getMapList(path + ".list");
         List<BookEntry> entries = new ArrayList<>();
         if (list != null && !list.isEmpty()) {
             for (Map<?, ?> raw : list) {
@@ -85,6 +85,10 @@ public final class CustomEnchantBooks {
                 return ShellEnchant.get() != null ? ShellEnchant.get() : Enchantment.getByKey(ShellEnchant.getKeyStatic());
             case "BOOM_LEGS":
                 return BoomLeggingsEnchant.get() != null ? BoomLeggingsEnchant.get() : Enchantment.getByKey(BoomLeggingsEnchant.getKeyStatic());
+            case "UNBREAKABLE":
+                return UnbreakableEnchant.get() != null ? UnbreakableEnchant.get() : Enchantment.getByKey(UnbreakableEnchant.getKeyStatic());
+            case "PUMPKIN":
+                return PumpkinEnchant.get() != null ? PumpkinEnchant.get() : Enchantment.getByKey(PumpkinEnchant.getKeyStatic());
             default:
                 return null;
         }
@@ -127,6 +131,10 @@ public final class CustomEnchantBooks {
                 return "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C";
             case "BOOM_LEGS":
                 return "&6\u041F\u043E\u0434\u0440\u044B\u0432";
+            case "UNBREAKABLE":
+                return "&6\u041D\u0435\u0440\u0430\u0437\u0440\u0443\u0448\u0438\u043C\u043E\u0441\u0442\u044C";
+            case "PUMPKIN":
+                return "&6\u0422\u044B\u043A\u0432\u0430";
             default:
                 return "&6\u041A\u043D\u0438\u0433\u0430";
         }

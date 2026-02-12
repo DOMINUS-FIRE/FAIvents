@@ -26,6 +26,9 @@ commands:
   chit:
     description: Anti-cheat check menu
     usage: /chit <player>
+  casino:
+    description: Open casino menu
+    usage: /casino
 permissions:
   faivents.admin:
     description: Admin permissions for FAIvents

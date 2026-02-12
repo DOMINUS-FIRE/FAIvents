@@ -1,5 +1,6 @@
 package me.dominus.faivents;
 
+import me.dominus.faivents.command.CasinoCommand;
 import me.dominus.faivents.command.ChaseCommand;
 import me.dominus.faivents.command.ChitCommand;
 import me.dominus.faivents.command.EventCommand;
@@ -22,6 +23,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -37,10 +40,17 @@ public final class FAIventsPlugin extends JavaPlugin {
     private InvisManager invisManager;
     private QuarryManager quarryManager;
     private boolean secretRequiresOp = false;
+    private FileConfiguration eventsConfig;
+    private FileConfiguration shopConfig;
+    private FileConfiguration casinoConfig;
+    private File eventsFile;
+    private File shopFile;
+    private File casinoFile;
 
     @Override
     public void onEnable() {
         safeLoadConfig();
+        loadExtraConfigs();
         Msg.init(this);
 
         eventManager = new EventManager(this);
@@ -57,6 +67,8 @@ public final class FAIventsPlugin extends JavaPlugin {
         HornEnchant.register(this);
         ShellEnchant.register(this);
         BoomLeggingsEnchant.register(this);
+        UnbreakableEnchant.register(this);
+        PumpkinEnchant.register(this);
 
         getServer().getPluginManager().registerEvents(new DrillListener(this), this);
         getServer().getPluginManager().registerEvents(new CustomEnchantListener(), this);
@@ -68,9 +80,15 @@ public final class FAIventsPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new HornListener(), this);
         getServer().getPluginManager().registerEvents(new ShellListener(), this);
         getServer().getPluginManager().registerEvents(new BoomLeggingsListener(this), this);
+        getServer().getPluginManager().registerEvents(new UnbreakableListener(), this);
+        getServer().getPluginManager().registerEvents(new PumpkinListener(), this);
         getServer().getPluginManager().registerEvents(new InvisListener(this, invisManager), this);
-        QuarryListener quarryListener = new QuarryListener(quarryManager);
+        QuarryListener quarryListener = new QuarryListener(this, quarryManager);
         getServer().getPluginManager().registerEvents(quarryListener, this);
+        int removedHolograms = quarryManager.cleanupOrphanedHolograms();
+        if (removedHolograms > 0) {
+            getLogger().info("Removed orphaned quarry holograms: " + removedHolograms);
+        }
 
         EventCommand eventCmd = new EventCommand(eventManager);
         bindCommand(
@@ -138,6 +156,18 @@ public final class FAIventsPlugin extends JavaPlugin {
         );
         getServer().getPluginManager().registerEvents(chit, this);
 
+        CasinoCommand casino = new CasinoCommand(this, quarryManager);
+        bindCommand(
+                "casino",
+                casino,
+                null,
+                "Open casino menu",
+                "/casino",
+                null,
+                null
+        );
+        getServer().getPluginManager().registerEvents(casino, this);
+
         registerBookRecipes();
 
         getLogger().info("FAIvents enabled");
@@ -161,6 +191,40 @@ public final class FAIventsPlugin extends JavaPlugin {
         return eventManager;
     }
 
+    public FileConfiguration getEventsConfig() {
+        return eventsConfig != null ? eventsConfig : getConfig();
+    }
+
+    public FileConfiguration getShopConfig() {
+        return shopConfig != null ? shopConfig : getConfig();
+    }
+
+    public FileConfiguration getCasinoConfig() {
+        return casinoConfig != null ? casinoConfig : getConfig();
+    }
+
+    public QuarryManager getQuarryManager() {
+        return quarryManager;
+    }
+
+    public void reloadEventsConfig() {
+        if (eventsFile != null) {
+            eventsConfig = YamlConfiguration.loadConfiguration(eventsFile);
+        }
+    }
+
+    public void reloadShopConfig() {
+        if (shopFile != null) {
+            shopConfig = YamlConfiguration.loadConfiguration(shopFile);
+        }
+    }
+
+    public void reloadCasinoConfig() {
+        if (casinoFile != null) {
+            casinoConfig = YamlConfiguration.loadConfiguration(casinoFile);
+        }
+    }
+
     public boolean isSecretRequiresOp() {
         return secretRequiresOp;
     }
@@ -176,6 +240,8 @@ public final class FAIventsPlugin extends JavaPlugin {
         addRecipe("book_horn", CustomEnchantBooks.createBook(HornEnchant.get(), "&6\u0420\u043E\u0433"), 'O', Material.GOAT_HORN, 'G', Material.ENCHANTED_GOLDEN_APPLE, 'B', Material.BOOK);
         addRecipe("book_shell", CustomEnchantBooks.createBook(ShellEnchant.get(), "&6\u041F\u0430\u043D\u0446\u0438\u0440\u044C"), 'T', Material.TURTLE_HELMET, 'S', Material.SHIELD, 'B', Material.BOOK);
         addRecipe("book_boom", CustomEnchantBooks.createBook(BoomLeggingsEnchant.get(), "&6\u041F\u043E\u0434\u0440\u044B\u0432"), 'C', Material.CREEPER_HEAD, 'L', Material.DIAMOND_LEGGINGS, 'B', Material.BOOK);
+        addRecipe("book_unbreakable", CustomEnchantBooks.createBook(UnbreakableEnchant.get(), "&6\u041D\u0435\u0440\u0430\u0437\u0440\u0443\u0448\u0438\u043C\u043E\u0441\u0442\u044C"), 'D', Material.DIAMOND, 'O', Material.OBSIDIAN, 'B', Material.BOOK);
+        addRecipe("book_pumpkin", CustomEnchantBooks.createBook(PumpkinEnchant.get(), "&6\u0422\u044B\u043A\u0432\u0430"), 'P', Material.CARVED_PUMPKIN, 'G', Material.GOLD_INGOT, 'B', Material.BOOK);
     }
 
 
@@ -236,6 +302,45 @@ public final class FAIventsPlugin extends JavaPlugin {
         }
     }
 
+    private void loadExtraConfigs() {
+        eventsFile = new File(getDataFolder(), "events.yml");
+        shopFile = new File(getDataFolder(), "shop.yml");
+        casinoFile = new File(getDataFolder(), "casino.yml");
+
+        eventsConfig = loadConfigWithMigration(eventsFile, "events.yml",
+                new String[] { "allow_parallel_events", "ufo", "meteor", "reality_glitch", "horror_night", "artifact_hunt" });
+        shopConfig = loadConfigWithMigration(shopFile, "shop.yml", new String[] { "shop" });
+        casinoConfig = loadConfigWithMigration(casinoFile, "casino.yml", new String[] { "casino" });
+
+        fixMojibakeFile(eventsFile);
+        fixMojibakeFile(shopFile);
+        fixMojibakeFile(casinoFile);
+        reloadEventsConfig();
+        reloadShopConfig();
+        reloadCasinoConfig();
+    }
+
+    private FileConfiguration loadConfigWithMigration(File file, String resource, String[] keys) {
+        if (!file.exists()) {
+            saveResource(resource, false);
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+            if (keys != null) {
+                for (String key : keys) {
+                    if (getConfig().isSet(key)) {
+                        cfg.set(key, getConfig().get(key));
+                    }
+                }
+            }
+            try {
+                cfg.save(file);
+            } catch (Exception e) {
+                getLogger().warning("Failed to save " + resource + ": " + e.getMessage());
+            }
+            return cfg;
+        }
+        return YamlConfiguration.loadConfiguration(file);
+    }
+
     private void fixMojibakeConfig() {
         try {
             File cfg = new File(getDataFolder(), "config.yml");
@@ -251,6 +356,22 @@ public final class FAIventsPlugin extends JavaPlugin {
             }
         } catch (Exception e) {
             getLogger().warning("Failed to fix config.yml encoding: " + e.getMessage());
+        }
+    }
+
+    private void fixMojibakeFile(File file) {
+        try {
+            if (file == null || !file.exists()) {
+                return;
+            }
+            String text = java.nio.file.Files.readString(file.toPath(), StandardCharsets.UTF_8);
+            String fixed = fixMojibake(text);
+            if (!fixed.equals(text)) {
+                java.nio.file.Files.writeString(file.toPath(), fixed, StandardCharsets.UTF_8);
+                getLogger().info("Fixed mojibake in " + file.getName());
+            }
+        } catch (Exception e) {
+            getLogger().warning("Failed to fix " + (file != null ? file.getName() : "file") + " encoding: " + e.getMessage());
         }
     }
 
